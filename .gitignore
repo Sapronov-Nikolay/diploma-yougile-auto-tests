@@ -1,0 +1,25 @@
+# Общее и системное
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+env/
+.env
+
+# Allure
+allure-results/
+allure-report/

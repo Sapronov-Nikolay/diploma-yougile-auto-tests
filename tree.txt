@@ -1,0 +1,35 @@
+📁 diploma-yougile-auto-tests/
+📊 Итог: Папок: 7, Файлов: 25, Уровней вложенности: 4
+
+├── README.md
+├── config.py
+├── conftest.py
+├── requirements.txt
+├── tree.txt
+├── src
+│   ├── __init__.py
+│   ├── api
+│   │   ├── __init__.py
+│   │   ├── client.py
+│   │   └── endpoints
+│   │       ├── __init__.py
+│   │       ├── auth.py
+│   │       └── projects.py
+│   ├── ui
+│   │   ├── __init__.py
+│   │   ├── base_page.py
+│   │   ├── locators.py
+│   │   └── pages
+│   │       ├── __init__.py
+│   │       ├── board_page.py
+│   │       ├── column_page.py
+│   │       ├── login_page.py
+│   │       ├── project_page.py
+│   │       └── task_page.py
+│   └── utils
+│       ├── __init__.py
+│       └── helpers.py
+└── tests
+    ├── __init__.py
+    ├── test_api.py
+    └── test_ui.py
