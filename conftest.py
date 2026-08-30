@@ -1,4 +1,7 @@
 # conftest.py
+# Это специальный файл для pytest: в нём определяют фикстуры (fixtures) и настраивает поведение тестов.
+# pytest автоматически подхватывает этот файл, если он лежит в корне тестовой директории.
+
 import pytest
 from selenium import webdriver
 from config import Config
