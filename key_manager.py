@@ -6,14 +6,12 @@
 - Удалить старые ключи, оставив один актуальный
 - Автоматически обновить YOUGILE_CURRENT_KEY в .env
 
-Важно: чувствительные данные (логин, пароль, URL) не хранятся в коде,
-а берутся из файла .env через os.getenv → .
+Важно: чувствительные данные (логин, пароль, URL) не хранятся в коде, а берутся из файла .env через os.getenv → .
 """
 import os, sys, requests
-from dotenv import load_dotenv, set_key   # Загрузка .env и запись в него# Загрузка .env и запись в него
+from dotenv import load_dotenv, set_key   # Загрузка .env и запись в него
 
 # Загружаем переменные из файла .env (например, YOUGILE_LOGIN, YOUGILE_PASSWORD и т.д.)
-# Если файла нет или он не настроен — переменные будут None
 load_dotenv()
 
 # ------------------------------------------------------------------
@@ -31,41 +29,34 @@ if not all([BASE_URL, LOGIN, PASSWORD, COMPANY_ID]):
     sys.exit(1)
 
 def get_all_keys():
-    """
-        Получает список всех API-ключей для компании.
-        Возвращает JSON-ответ в виде списка словарей.
-    """
     url = f"{BASE_URL}/api-v2/auth/keys/get"
-    # Тело запроса: передаём логин, пароль и companyId
     payload ={
         "login": LOGIN,
         "password": PASSWORD,
         "companyId": COMPANY_ID
     }
     resp = requests.post(url, json=payload)
-    # Если сервер вернул ошибку (4xx, 5xx), сразу выбросит исключение
     resp.raise_for_status()
     return resp.json()
 
+
+"""
+    Удаляет один выбранный API-ключ по его значению
+    key-value: с самим ключом, который хотим удалить
+    current_key: ключ, от имени которого делаем удаление (должен быть активным)
+    Возвращает True, если удаление прошло успешно (HTTP 200), иначе False.
+"""
 def delete_key(key_value, current_key):
-    """
-        Удаляет один выбранный API-ключ по его значению
-        key-value: с самим ключом, который хотим удалить
-        current_key: ключ, от имени которого делаем удаление (должен быть активным)
-        Возвращает True, если удаление прошло успешно (HTTP 200), иначе False.
-    """
-    # URL вида: /api-v2/auth/keys/<key>
     url = f"{BASE_URL}/api-v2/auth/keys/{key_value}"
-    # Авторизация через Bearer-токен (текущий активный ключ)
     headers = {"Authorization": f"Bearer {current_key}"}
     resp = requests.delete(url, headers=headers)
-    # Успешным считаем только статус 200
 
+
+"""
+    Выводит читаемый список всех API-ключей.
+    Помечает текущий ключ пометкой "← ТЕКУЩИЙ".
+"""
 def list_keys():
-    """
-        Выводит читаемый список всех API-ключей.
-        Помечает текущий ключ пометкой "← ТЕКУЩИЙ".
-    """
     try:
         keys = get_all_keys()
     except Exception as e:
@@ -79,10 +70,8 @@ def list_keys():
     print("=" * 70)
 
     for i, key_data in enumerate(keys, 1):
-        # .get() безопаснее, чем key_data["key"], если ключа вдруг нет
         key_value = key_data.get("key", "НЕТ ЗНАЧЕНИЯ")
         timestamp = key_data.get("timestamp", "неизвестно")
-        # Проверяем, совпадает ли этот ключ с текущим (из .env)
         is_current = "← ТЕКУЩИЙ" if CURRENT_KEY and key_value == CURRENT_KEY else ""
         print(f"{i:2}. КЛЮЧ: {key_value}")
         print(f"   ДАТА: {timestamp}({is_current})")
@@ -92,18 +81,17 @@ def list_keys():
     print("💡 Для очистки введите команду: python key_manager.py --clean")
     print("=" * 70 + "\n")
 
+
+"""
+    Очищает старше API-ключи, оставляя только один (keep_key).
+     Если keep_key не передан, то используется CURRENT_KEY из .env.
+     Если и его нет - создаётся новый ключ и сохраняется как текущий.
+     И обновляет .env: YOUGILE_CURRENT_KEY = <новый ключ>
+"""
 def clean_keys(keep_key=None):
-    """
-        Очищает старше API-ключи, оставляя только один (keep_key).
-         Если keep_key не передан, то используется CURRENT_KEY из .env.
-         Если и его нет - создаётся новый ключ и сохраняется как текущий.
-         И обновляет .env: YOUGILE_CURRENT_KEY = <новый ключ>
-    """
     # Логика выбора ключа, которую надо оставить
     if keep_key is None:
         keep_key = CURRENT_KEY
-
-    # Если даже текущего ключа нет - создаём новый
     if not keep_key:
         print("🔑 Получаем новый ключ...")
         try:
@@ -137,7 +125,6 @@ def clean_keys(keep_key=None):
 
     for key in keys:
         key_value = key["key"]
-        # Если это тот самый ключ, который мы хотим оставить - то пропускаем
         if key_value == keep_key:
             print(f"⏭️ Пропускаем: {key_value[:20]}...")
             deleted += 1
@@ -160,19 +147,15 @@ def clean_keys(keep_key=None):
     set_key(".env", "YOUGILE_CURRENT_KEY", keep_key)
     print(f"✅ .env обновлён: YOUGILE_CURRENT_KEY = {keep_key[:20]}...\n")
 
-# Точка входа: когда запускается python key_manager.py ...
+
 if __name__ == "__main__":
-    # sys.argv - это список аргументов командной строки
-    # Пример: ["key_manager.py", "--list"] или ["key_manager.py", "--clean", "--keep", "abc123"]
     if "--list" in sys.argv:
         list_keys()
 
     elif "--clean" in sys.argv:
-        # поддержка необязательного флага --keep <key>
         keep_key = None
         if "--keep" in sys.argv:
             idx = sys.argv.index("--keep") + 1
-            # Проверяем, что после --keep действительно есть значение
             if idx < len(sys.argv):
                 keep_key = sys.argv[idx]
             else:
