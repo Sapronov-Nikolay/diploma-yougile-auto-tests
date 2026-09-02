@@ -2,11 +2,15 @@
 from selenium.webdriver.common.by import By
 
 LOCATORS = {
-    # Страница авторизации
-    'поле_почты': (By.NAME, "email"),
-    'поле_пароля': (By.NAME, "password"),
-    'кнопка_войти': (By.CSS_SELECTOR, "button[type='submit']"),
-    'сообщение_ошибки': (By.CSS_SELECTOR, ".error-message"),
+    # Страница авторизации (https://ru.yougile.com/team/)
+    'кнопка_перейти_к_входу': (By.CSS_SELECTOR, "a.sign-in-button"),  # кнопка "Войти" на главной
+    'поле_почты': (By.CSS_SELECTOR, "input[type='email'][autocomplete='email']"),
+    'поле_пароля': (By.CSS_SELECTOR, "input[type='password'][autocomplete='current-password']"),
+    'кнопка_войти': (By.XPATH, "//div[@role='button' and .//div[text()='Войти']]"),
+    'сообщение_ошибки': (By.CSS_SELECTOR, ".error-message"),  # возможно не используется
+
+    # Заголовок "Моя компания" после успешного входа
+    'заголовок_моя_компания': (By.CSS_SELECTOR, "div.text-sm-semibold.text-panel-text-primary.cursor-default"),
 
     # Левая панель - проекты (кнопка "+" рядом с "Моя компания")
     'кнопка_добавить_проект_в_меню': (By.CSS_SELECTOR, "[data-testid='add-project-button']"),
@@ -36,11 +40,9 @@ LOCATORS = {
     'кнопка_создать_колонку': (By.XPATH, "//span[text()='Создать колонку']"),
     'поле_название_колонки': (By.CSS_SELECTOR, "input[placeholder='Введите имя колонки…']"),
     'заголовок_колонки': (By.CSS_SELECTOR, ".task-group-title-new span"),
-    'текст_колонки': (By.CSS_SELECTOR, ".task-group-title-new span"),
 
     # Задачи
     'кнопка_добавить_задачу': (By.XPATH, "//span[text()='Добавить задачу']"),
     'поле_название_задачи': (By.CSS_SELECTOR, "textarea[data-testid='board-task-input-name']"),
     'заголовок_задачи': (By.CSS_SELECTOR, "[data-testid='board-task-title'] span span"),
-    'текст_задачи': (By.CSS_SELECTOR, "[data-testid='board-task-title'] span span"),
 }
