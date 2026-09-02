@@ -49,7 +49,7 @@ class YouGileApiClient:
                     json={
                         "login": self.login,
                         "password": self.password,
-                        "company_id": self.company_id
+                        "companyId": self.company_id
                     }
                 )
                 resp.raise_for_status()

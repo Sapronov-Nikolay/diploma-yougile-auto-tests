@@ -75,7 +75,7 @@ def list_keys():
         timestamp = key_data.get("timestamp", "неизвестно")
         is_current = "← ТЕКУЩИЙ" if CURRENT_KEY and key_value == CURRENT_KEY else ""
         print(f"{i:2}. КЛЮЧ: {key_value}")
-        print(f"   ДАТА: {timestamp}({is_current})")
+        print(f"   ДАТА: {timestamp} {is_current}")
         print("=" * 70)
 
     print("=" * 70)
@@ -128,7 +128,7 @@ def clean_keys(keep_key=None):
         key_value = key["key"]
         if key_value == keep_key:
             print(f"⏭️ Пропускаем: {key_value[:20]}...")
-            deleted += 1
+            skipped += 1
             continue
 
         # пробуем удалить
@@ -141,7 +141,7 @@ def clean_keys(keep_key=None):
     print("=" * 70)
     print(f"✅ Удалено: {deleted}")
     print(f"⏭️ Пропущено: {skipped}")
-    print(f"📊 Осталось: {len(keys) - skipped}")
+    print(f"📊 Осталось: {len(keys) - deleted}")
     print("=" * 70)
 
     # Обновляем .env, чтобы сохранить новый текущий ключ
