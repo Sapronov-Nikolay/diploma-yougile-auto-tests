@@ -2,12 +2,12 @@
 """
     Модуль с методами для авторизации через API YouGile
     Здесь реализованы операции, которые требуют передачи логина и пароля
-        - Получение списка компаний (чтобы доставть CompanyId)
+        - Получение списка компаний (чтобы достать CompanyId)
         - Создание нового API-ключа
 
     Важно: эти методы используют учётные данные пользователя. В реальных проектах
     их стараются вызывать как можно реже (например, только при настройке системы),
-    а данные работают с временными токенами и ключами
+    а данные работают с временными токенами и ключами.
 """
 
 from src.api.client import YouGileApiClient
@@ -18,7 +18,7 @@ class AuthEndpoint:
         self.client = client
 
     """Получение CompanyId по логину и паролю."""
-    def get_company_id(self, login, password):
+    def get_company_id(self, login: str, password: str) -> str:
         resp = self.client.post("/api-v2/auth/companies",{
             "login": login,
             "password": password,
@@ -30,12 +30,12 @@ class AuthEndpoint:
             raise ValueError("API вернул пустой список компаний. Проверьте учётные данные")
         return data[0]["id"]
 
-    """Создание и получить новый API-ключ для указанного company_id."""
-    def get_api_key(self, login, password, company_id):
+    """Создание и получить новый API-ключ для указанного companyId."""
+    def get_api_key(self, login: str, password: str, company_id: str) -> str:
         resp = self.client.post("/api-v2/auth/keys", {
             "login": login,
             "password": password,
-            "company_id": company_id,
+            "companyId": company_id,
         })
         resp.raise_for_status()
 
