@@ -14,6 +14,7 @@ import pytest, datetime, os
 from selenium import webdriver
 from config import Config       # Класс с настройками (логины, URL и т.д.)
 from src.api.client import YouGileApiClient     # Клиент для API-тестов
+from src.ui.pages.login_page import LoginPage
 
 Config.ensure_dirs()  # Создаём папку для скриншотов при старте. Без них если тест отскринит падение, то скрин не сохранится
 
@@ -47,16 +48,15 @@ def driver():
 
 """
     Фикстура, возвращает уже авторизованный в системе браузер.
-    Зависит от фикстуры `driver`: сначала возвращается обычный драйвер, а затем выполняется вход через UI.
+    Зависит от фикстуры `driver`: сначала возвращается обычный драйвер, а затем выполняется
+    авторизация через UI и ожидание появления "Моя компания".
 """
 @pytest.fixture
 def authorized_driver(driver):
-    from src.ui.pages.login_page import LoginPage  # Page Object для страницы входа
     login_page = LoginPage(driver)
-    login_page.open()
+    login_page.open()   # Переход на страницу входа (через кнопку)
     login_page.login(Config.LOGIN, Config.PASSWORD)
-    driver.get(f"{Config.BASE_URL}/team/projects")
-    return driver
+    return driver   # Теперь мы на /team/ с открытым разделом "Моя компания"
 
 
 """
