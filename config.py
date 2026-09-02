@@ -33,5 +33,5 @@ class Config:
     """
     @classmethod
     def ensure_dirs(cls):
-        for d in ["screen_ui", "allure-results"]:
+        for d in ["screenshots", "allure-results"]:
             os.makedirs(d, exist_ok=True)

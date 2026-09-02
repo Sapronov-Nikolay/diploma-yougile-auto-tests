@@ -20,6 +20,11 @@ venv/
 env/
 .env
 
+# Скриншоты (не заливаем на GitHub)
+screens/
+screenshots/
+screen_ui/
+
 # Allure
 allure-results/
 allure-report/
