@@ -50,6 +50,7 @@ def delete_key(key_value, current_key):
     url = f"{BASE_URL}/api-v2/auth/keys/{key_value}"
     headers = {"Authorization": f"Bearer {current_key}"}
     resp = requests.delete(url, headers=headers)
+    return resp.status_code == 200
 
 
 """
@@ -83,7 +84,7 @@ def list_keys():
 
 
 """
-    Очищает старше API-ключи, оставляя только один (keep_key).
+    Очищает старые API-ключи, оставляя только один (keep_key).
      Если keep_key не передан, то используется CURRENT_KEY из .env.
      Если и его нет - создаётся новый ключ и сохраняется как текущий.
      И обновляет .env: YOUGILE_CURRENT_KEY = <новый ключ>

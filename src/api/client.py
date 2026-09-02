@@ -27,7 +27,8 @@ class YouGileApiClient:
         if self._token is None:
             if not self.company_id:
                 resp = requests.post(
-                    f"{self.base_url}/api/auth/companies", json={
+                    f"{self.base_url}/api-v2/auth/companies",
+                    json={
                         "login": self.login,
                         "password": self.password
                     }
@@ -35,7 +36,7 @@ class YouGileApiClient:
                 resp.raise_for_status()
                 data = resp.json()
                 if not data:
-                    raise ValueError("API вернул пустой список компаний. Проверьте учётные записи.")
+                    raise ValueError("API вернул пустой список компаний. Проверьте логин/пароль.")
                 self.company_id = data[0]["id"]
 
             # Приоритет: если в .env есть CURRENT_KEY, используем его.
@@ -44,7 +45,8 @@ class YouGileApiClient:
             else:
                 # Если токена нет — запрашиваем новый ключ через логин/пароль
                 resp = requests.post(
-                    f"{self.base_url}/api-v2/auth/keys", json={
+                    f"{self.base_url}/api-v2/auth/keys",
+                    json={
                         "login": self.login,
                         "password": self.password,
                         "company_id": self.company_id
@@ -63,20 +65,16 @@ class YouGileApiClient:
 
     """Выполнить POST-запрос к API."""
     def post(self, endpoint, payload):
-        url = f"{self.base_url}{endpoint}"
-        return requests.post(url, json=payload, headers=self._headers())
+        return requests.post(f"{self.base_url}{endpoint}", json=payload, headers=self._headers())
 
     """Выполнить GET-запрос."""
-    def get(self, endpoint, payload):
-        url = f"{self.base_url}{endpoint}"
-        return requests.get(url, headers=self._headers())
+    def get(self, endpoint):
+        return requests.get(f"{self.base_url}{endpoint}", headers=self._headers())
 
     """Выполнить PUT-запрос (обычно для обновления ресурсов)."""
     def put(self, endpoint, payload):
-        url = f"{self.base_url}{endpoint}"
-        return requests.put(url, json=payload, headers=self._headers())
+        return requests.put(f"{self.base_url}{endpoint}", json=payload, headers=self._headers())
 
     """Выполнить DELETE-запрос (обычно для удаления ресурсов)."""
     def delete(self, endpoint):
-        url = f"{self.base_url}{endpoint}"
-        return requests.delete(url, headers=self._headers())
+        return requests.delete(f"{self.base_url}{endpoint}", headers=self._headers())
