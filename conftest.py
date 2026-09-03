@@ -73,7 +73,7 @@ def pytest_runtest_makereport(item, call):
         # Проверяем, есть ли у тестов фикстура driver
         driver = None
         if "driver" in item.funcargs: driver = item.funcargs["driver"]
-        elif "autorized_driver" in item.funcargs: driver = item.funcargs["autorized_driver"]
+        elif "autorized_driver" in item.funcargs: driver = item.funcargs["authorized_driver"]
 
         if driver is not None:
             # Имя теста без квадратных скобок
