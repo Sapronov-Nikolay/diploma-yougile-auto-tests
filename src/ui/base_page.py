@@ -52,7 +52,3 @@ class BasePage:
             return True
         except:
             return False
-
-    @allure.step("Ожидать появления текста в URL: {text}")
-    def wait_for_url_contains(self, text):
-        self.wait.until(EC.url_contains(text))

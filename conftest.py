@@ -14,6 +14,7 @@ import pytest, datetime, os
 from selenium import webdriver
 from config import Config       # Класс с настройками (логины, URL и т.д.)
 from src.api.client import YouGileApiClient     # Клиент для API-тестов
+from src.ui.locators import LOCATORS
 from src.ui.pages.login_page import LoginPage
 
 Config.ensure_dirs()  # Создаём папку для скриншотов при старте. Без них если тест отскринит падение, то скрин не сохранится
@@ -56,6 +57,7 @@ def authorized_driver(driver):
     login_page = LoginPage(driver)
     login_page.open()   # Переход на страницу входа (через кнопку)
     login_page.login(Config.LOGIN, Config.PASSWORD)
+    driver.find_element(*LOCATORS['заголовок_моя_компания'])
     return driver   # Теперь мы на /team/ с открытым разделом "Моя компания"
 
 

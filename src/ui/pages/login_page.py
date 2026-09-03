@@ -35,5 +35,3 @@ class LoginPage(BasePage):
         self.send_keys('поле_почты', email)
         self.send_keys('поле_пароля', password)
         self.click('кнопка_войти')
-        # После входа URL остаётся /team/ , но появляется заголовок "Моя компания"
-        self.wait.until(lambda d: d.find_element(*LOCATORS['заголовок_моя_компания']))
