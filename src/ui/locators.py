@@ -7,7 +7,7 @@ LOCATORS = {
     'поле_почты': (By.CSS_SELECTOR, "input[type='email'][autocomplete='email']"),
     'поле_пароля': (By.CSS_SELECTOR, "input[type='password'][autocomplete='current-password']"),
     'кнопка_войти': (By.XPATH, "//div[@role='button' and .//div[text()='Войти']]"),
-    'сообщение_ошибки': (By.CSS_SELECTOR, ".error-message"),  # возможно не используется
+    'сообщение_ошибки': (By.CSS_SELECTOR, ".login-error"),
 
     # Заголовок "Моя компания" после успешного входа
     'заголовок_моя_компания': (By.CSS_SELECTOR, "div.text-sm-semibold.text-panel-text-primary.cursor-default"),
