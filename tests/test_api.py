@@ -29,7 +29,7 @@ class TestAuthAPI:
     @allure.story("Авторизация")
     @allure.feature("Получение CompanyId")
     @allure.title("Успешное получение CompanyId")
-    @allure.description("проверка, что API возвращает ID компании")
+    @allure.description("Проверка, что API возвращает ID компании")
     @pytest.mark.api
     def test_get_company_id(self, api_client: YouGileApiClient) -> None:
         with allure.step("1. Отправить POST /auth/companies"):
@@ -38,12 +38,20 @@ class TestAuthAPI:
                 "password": Config.PASSWORD
             })
 
-        with allure.step("2. проверяем статус-код 200"):
+        with allure.step("2. Проверить статус-код 200"):
             assert resp.status_code == 200
 
-        with allure.step("3. Проверить наличие id вответе"):
-            assert len(resp.json()) > 0
-            assert "id" in resp.json()[0]
+        with allure.step("3. Проверить наличие id в ответе"):
+            data = resp.json()
+            # API может вернуть список или объект с полем content
+            if isinstance(data, dict):
+                # Если это словарь, ищем список в 'content' или 'data'
+                companies = data.get("content") or data.get("data") or []
+            else:
+                companies = data
+
+            assert len(companies) > 0, "В ответе нет компаний"
+            assert "id" in companies[0], "Компания не содержит id"
 
     """Запросить API‑ключ через вспомогательный endpoint и проверить его наличие."""
     @allure.id("API-02")
@@ -90,15 +98,20 @@ class TestProjectsAPI:
     def test_create_project(self, api_client: YouGileApiClient) -> None:
         projects = ProjectsEndpoint(api_client)
 
-        with allure.step("1. Создать проект"):
+        with allure.step("1. Создать проект с уникальным именем"):
             unique_name = f"{random.randint(1000,9999)}_API_Test_Project"
             resp = projects.create(unique_name)
+            # Сохраняем ID для очистки
             self.created_project_ids.append(resp["id"])
             ALL_CREATED_PROJECT_IDS.append(resp["id"])
 
-        with allure.step("2. Проверить, что проект создан"):
-            assert resp["id"] is not None
-            assert resp["title"] == unique_name
+        with allure.step("2. Проверить, что проект создан (проверяем наличие id)"):
+            assert resp["id"] is not None, "API не вернул id проекта"
+
+        with allure.step("3. Получить проект по ID и проверить название"):
+            # API при создании возвращает только id, поэтому название проверяем через GET
+            got = projects.get(resp["id"])
+            assert got["title"] == unique_name
 
     """Создать проект, получить его по ID и проверить совпадение данных."""
     @allure.id("API-04")
@@ -111,7 +124,7 @@ class TestProjectsAPI:
         projects = ProjectsEndpoint(api_client)
 
         with allure.step("1. Создать проект для проверки"):
-            unique_name = f"{random.randint(1000, 9999)}_API_Test_Project"
+            unique_name = f"{random.randint(1000,9999)}_API_Test_Project"
             created = projects.create(unique_name)
             self.created_project_ids.append(created["id"])
             ALL_CREATED_PROJECT_IDS.append(created["id"])
@@ -134,17 +147,20 @@ class TestProjectsAPI:
         projects = ProjectsEndpoint(api_client)
 
         with allure.step("1. Создать проект"):
-            unique_name = f"{random.randint(1000, 9999)}_Old_name"
+            unique_name = f"{random.randint(1000,9999)}_Old_name"
             created = projects.create(unique_name)
             self.created_project_ids.append(created["id"])
             ALL_CREATED_PROJECT_IDS.append(created["id"])
 
         with allure.step("2. Обновить название проекта"):
-            new_name = f"{random.randint(1000, 9999)}_New_name"
+            new_name = f"{random.randint(1000,9999)}_New_name"
+            # API при обновлении возвращает только id, поэтому проверяем через GET
             updated = projects.update(created["id"], title=new_name)
+            assert updated["id"] == created["id"]
 
-        with allure.step("3. проверить, что название изменилось"):
-            assert updated["title"] == new_name
+        with allure.step("3. Проверить, что название изменилось (через GET)"):
+            got = projects.get(created["id"])
+            assert got["title"] == new_name
 
     """Удалить проект и проверить, что флаг deleted установлен в True."""
     @allure.id("API-06")
@@ -157,13 +173,15 @@ class TestProjectsAPI:
         projects = ProjectsEndpoint(api_client)
 
         with allure.step("1. Создать проект для удаления"):
-            unique_name = f"{random.randint(1000, 9999)}_API_Delete_Project"
+            unique_name = f"{random.randint(1000,9999)}_API_Delete_Project"
             created = projects.create(unique_name)
             self.created_project_ids.append(created["id"])
             ALL_CREATED_PROJECT_IDS.append(created["id"])
 
         with allure.step("2. Мягко удалить проект"):
             resp = projects.soft_delete(created["id"])
+            assert resp["id"] == created["id"], "API вернул неверный id при удалении"
 
-        with allure.step("Проверить флаг deleted - deleted=true"):
-            assert resp["deleted"] is True
+        with allure.step("3. Проверить флаг deleted через GET"):
+            got = projects.get(created["id"])
+            assert got["deleted"] is True
