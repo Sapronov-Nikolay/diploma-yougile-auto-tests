@@ -46,4 +46,18 @@ locators = {
     'кнопка_добавить_задачу': (By.XPATH, "//span[text()='Добавить задачу']"),
     'поле_название_задачи': (By.CSS_SELECTOR, "textarea[data-testid='board-task-input-name']"),
     'заголовок_задачи': (By.CSS_SELECTOR, "[data-testid='board-task-title'] span span"),
+
+    # Архив проектов
+    'архивный_заголовок': (By.XPATH, "//div[contains(@class,'min-w-0') and contains(text(), 'Архивированные проекты')]"),
+    'проект_в_архиве': (By.CSS_SELECTOR, "[data-testid='project-card']"),
+    'проект_три_точки': (By.CSS_SELECTOR, "[data-testid='project-card-menu-button']"),
+
+    # Контекстное меню
+    'пункт_меню_удалить': (By.XPATH, "//div[contains(@class,'menu-item') and .//div[text()='Удалить']]"),
+
+    # Модальное окно подтверждения удаления
+    'кнопка_подтвердить_удаление': (By.XPATH, "//div[@role='button' and .//div[text()='Удалить']]"),
+
+    # НОВЫЙ ЛОКАТОР (добавлен для поиска карточки по названию)
+    'заголовок_проекта_в_карточке': (By.CSS_SELECTOR, "[data-testid='project-title']"),
 }

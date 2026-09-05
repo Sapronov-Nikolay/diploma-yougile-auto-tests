@@ -4,4 +4,3 @@ pytest>=7.0.0,<10.0.0
 allure-pytest>=2.0.0,<3.0.0
 python-dotenv>=0.19.0,<2.0.0
 flake8>=6.0.0,<8.0.0
-Faker>=18.0.0,<40.38.0

@@ -17,6 +17,9 @@ from src.api.client import YouGileApiClient     # Клиент для API-тес
 from src.ui.locators import locators
 from src.ui.pages.login_page import LoginPage
 
+ALL_CREATED_PROJECT_IDS = []
+"""Глобальный список ID всех проектов, созданных в ходе API-тестов"""
+
 Config.ensure_dirs()  # Создаём папку для скриншотов при старте. Без них если тест отскринит падение, то скрин не сохранится
 
 """
@@ -90,3 +93,26 @@ def pytest_runtest_makereport(item, call):
             driver.save_screenshot(screenshot_path)
             # Добавляем скриншот в Allure (опционально)
             allure.attach.file(screenshot_path, name="Screenshot", attachment_type=allure.attachment_type.PNG)
+
+# noinspection PyUnusedLocal
+def pytest_sessionfinish(session, exitstatus):
+    """
+        Физическое удаление всех проектов, созданных во время API-тестов.
+        Запускается только после сессии, в которой были API-тесты.
+    """
+    if ALL_CREATED_PROJECT_IDS:
+        from src.ui.pages.project_page import ProjectPage
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        cleanup_driver = webdriver.Chrome(options=options)
+        cleanup_driver.maximize_window()
+        login_page = LoginPage(cleanup_driver)
+        login_page.open()
+        login_page.login(Config.LOGIN, Config.PASSWORD)
+        project_page = ProjectPage(cleanup_driver)
+        project_page.open_archive()
+        # Удаляем по конкретным ID
+        project_page.delete_archived_projects_by_ids(ALL_CREATED_PROJECT_IDS)
+        cleanup_driver.quit()

@@ -17,6 +17,7 @@ from typing import Any, Generator
 from src.api.client import YouGileApiClient
 from src.api.endpoints.auth import AuthEndpoint
 from src.api.endpoints.projects import ProjectsEndpoint
+from conftest import ALL_CREATED_PROJECT_IDS
 
 """Тесты для проверки авторизации и получения ключей API."""
 @allure.epic("API")
@@ -92,6 +93,7 @@ class TestProjectsAPI:
         with allure.step("1. Создать проект"):
             resp = projects.create("API_Test_Project")
             self.created_project_ids.append(resp["id"])
+            ALL_CREATED_PROJECT_IDS.append(resp["id"])
 
         with allure.step("2. Проверить, что проект создан"):
             assert resp["id"] is not None
@@ -110,12 +112,13 @@ class TestProjectsAPI:
         with allure.step("1. Создать проект для проверки"):
             created = projects.create("API_Test_Project")
             self.created_project_ids.append(created["id"])
+            ALL_CREATED_PROJECT_IDS.append(created["id"])
 
         with allure.step("2. Получить проект по ID"):
             acquire = projects.get(created["id"])
 
         with allure.step("3. Проверить совпадение данных"):
-            assert acquire["id]"] == created["id"]
+            assert acquire["id"] == created["id"]
             assert acquire["title"] == "API_Test_Project"
 
     """Обновить название проекта и убедиться, что изменение применилось."""
@@ -131,9 +134,10 @@ class TestProjectsAPI:
         with allure.step("1. Создать проект"):
             created = projects.create("Old_name_035")
             self.created_project_ids.append(created["id"])
+            ALL_CREATED_PROJECT_IDS.append(created["id"])
 
         with allure.step("2. Обновить название проекта"):
-            updated = projects.get(created["id"], title="New_name_036")
+            updated = projects.update(created["id"], title="New_name_036")
 
         with allure.step("3. проверить, что название изменилось"):
             assert updated["title"] == "New_name_036"
@@ -151,6 +155,7 @@ class TestProjectsAPI:
         with allure.step("1. Создать проект для удаления"):
             created = projects.create("API_Delete_Project")
             self.created_project_ids.append(created["id"])
+            ALL_CREATED_PROJECT_IDS.append(created["id"])
 
         with allure.step("2. Мягко удалить проект"):
             resp = projects.soft_delete(created["id"])
