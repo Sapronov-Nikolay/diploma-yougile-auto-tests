@@ -43,3 +43,4 @@ class ColumnPage(BasePage):
     def is_column_present(self, name: str) -> bool:
         headers = self.driver.find_elements(*locators['заголовок_колонки'])
         return any(name == header.text for header in headers)
+ в
