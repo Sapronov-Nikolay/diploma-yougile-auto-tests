@@ -10,6 +10,7 @@
     а данные работают с временными токенами и ключами.
 """
 
+import allure
 from src.api.client import YouGileApiClient
 
 class AuthEndpoint:
@@ -18,6 +19,7 @@ class AuthEndpoint:
         self.client = client
 
     """Получение CompanyId по логину и паролю."""
+    @allure.step("Получить CompanyId для пользователя {login} и {password}")
     def get_company_id(self, login: str, password: str) -> str:
         resp = self.client.post("/api-v2/auth/companies",{
             "login": login,
@@ -31,6 +33,7 @@ class AuthEndpoint:
         return data[0]["id"]
 
     """Создание и получить новый API-ключ для указанного companyId."""
+    @allure.step("Создать API-ключ для компании {company_id}")
     def get_api_key(self, login: str, password: str, company_id: str) -> str:
         resp = self.client.post("/api-v2/auth/keys", {
             "login": login,

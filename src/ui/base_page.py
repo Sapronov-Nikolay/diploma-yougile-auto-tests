@@ -14,10 +14,9 @@
     или добавить логирование, то править нужно будет только этот файл, а не весь проект.
 """
 import allure
-from selenium.common import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from src.ui.locators import LOCATORS
+from src.ui.locators import locators
 
 class BasePage:
     """Базовый класс-помощник для работы с UI-элементами"""
@@ -26,11 +25,11 @@ class BasePage:
         self.wait = WebDriverWait(self.driver, 10)
 
     def find_element(self, locator_key):
-        return self.wait.until(EC.visibility_of_element_located(LOCATORS[locator_key]))
+        return self.wait.until(EC.visibility_of_element_located(locators[locator_key]))
 
     @allure.step("Кликнуть по элементу: {locator_key}")
     def click(self, locator_key):
-        self.wait.until(EC.element_to_be_clickable(LOCATORS[locator_key])).click()
+        self.wait.until(EC.element_to_be_clickable(locators[locator_key])).click()
 
     @allure.step("Ввести текст в поле: {locator_key}")
     def send_keys(self, locator_key, text):
@@ -42,13 +41,13 @@ class BasePage:
     def is_visible(self,locator_key):
         try:
             return self.find_element(locator_key).is_displayed()
-        except:
+        except Exception:
             return False
 
     @allure.step("Проверить кликабельность элемента: {locator_key}")
     def is_clickable(self,locator_key) -> bool:
         try:
-            self.wait.until(EC.element_to_be_clickable(LOCATORS[locator_key]))
+            self.wait.until(EC.element_to_be_clickable(locators[locator_key]))
             return True
-        except:
+        except Exception:
             return False

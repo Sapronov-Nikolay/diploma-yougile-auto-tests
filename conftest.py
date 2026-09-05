@@ -10,7 +10,7 @@
     pytest автоматически подхватывает этот файл, если он лежит в корне тестовой директории.
 """
 
-import pytest, datetime, os
+import pytest, datetime, os, allure
 from selenium import webdriver
 from config import Config       # Класс с настройками (логины, URL и т.д.)
 from src.api.client import YouGileApiClient     # Клиент для API-тестов
@@ -55,9 +55,12 @@ def driver():
 @pytest.fixture
 def authorized_driver(driver):
     login_page = LoginPage(driver)
-    login_page.open()   # Переход на страницу входа (через кнопку)
-    login_page.login(Config.LOGIN, Config.PASSWORD)
-    driver.find_element(*LOCATORS['заголовок_моя_компания'])
+    with allure.step("Открыть страницу входа"):
+        login_page.open()   # Переход на страницу входа (через кнопку)
+    with allure.step("Выполнить вход"):
+        login_page.login(Config.LOGIN, Config.PASSWORD)
+    with allure.step("Дождаться появления заголовка 'Моя компания'"):
+        driver.find_element(*LOCATORS['заголовок_моя_компания'])
     return driver   # Теперь мы на /team/ с открытым разделом "Моя компания"
 
 
@@ -69,6 +72,9 @@ def authorized_driver(driver):
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
+    # Заглушка убирает сообщение о неиспользовании call, так как call обязателен в функции.
+    if call.excinfo is not None:
+        pass
     if report.when == "call" and report.failed:
         # Проверяем, есть ли у тестов фикстура driver
         driver = None
@@ -83,5 +89,4 @@ def pytest_runtest_makereport(item, call):
             screenshot_path = os.path.join("screenshots", f"{test_name}_{timestaamp}.png")
             driver.save_screenshot(screenshot_path)
             # Добавляем скриншот в Allure (опционально)
-            import allure
             allure.attach.file(screenshot_path, name="Screenshot", attachment_type=allure.attachment_type.PNG)

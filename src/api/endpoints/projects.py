@@ -1,7 +1,7 @@
 # src/api/endpoints/projects.py
 """
     Модуль с методами для работы с проектами через API YouGile.
-    Это "слой абстракции' над сырыми HTTP-запросами: вместо того чтобы в каждом тесте
+    Это 'слой абстракции' над сырыми HTTP-запросами: вместо того чтобы в каждом тесте
     писать self.client.post("/api-v2/projects", {...}), мы вызываем понятный метод:
         projects.create("Мой проект", users={...})
 
@@ -17,6 +17,7 @@
     Такой подход соответствует принципам чистого кода и упрощает поддержку автотестов.
 """
 
+import allure
 from typing import Any, Dict, Optional
 from src.api.client import YouGileApiClient
 
@@ -26,8 +27,9 @@ class ProjectsEndpoint:
         self.client = client
 
     """Создать новый проект в YouGile."""
+    @allure.step("Создать проект с названием {title}")
     def create(self, title: str, users: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
-        payload = {"title": title}
+        payload: Dict[str, Any] = {"title": title}
         if users:
             payload["users"] = users
         resp = self.client.post("/api-v2/projects", payload)
@@ -35,12 +37,14 @@ class ProjectsEndpoint:
         return resp.json()
 
     """Получить данные проекта по его ID."""
+    @allure.step("Получить проект с ID {project_id}")
     def get(self, project_id: str) -> Dict[str, Any]:
         resp = self.client.get(f"/api-v2/projects/{project_id}")
         resp.raise_for_status()
         return resp.json()
 
     """Обновить проект: поменять название и/или пометить как удалённый."""
+    @allure.step("Обновить проект {project_id}")
     def update(self, project_id: str, title: Optional[str] = None, deleted: Optional[bool] = None) -> Dict[str, Any]:
         payload = {}
         if title is not None:
@@ -52,5 +56,6 @@ class ProjectsEndpoint:
         return resp.json()
 
     """Мягко удалить проект (пометить как deleted=True)"""
+    @allure.step("Мягко удалить проект {project_id}")
     def soft_delete(self, project_id: str) -> Dict[str, Any]:
         return self.update(project_id, deleted=True)

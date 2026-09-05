@@ -1,7 +1,7 @@
 # src/ui/locators.py
 from selenium.webdriver.common.by import By
 
-LOCATORS = {
+locators = {
     # Страница авторизации (https://ru.yougile.com/team/)
     'кнопка_перейти_к_входу': (By.CSS_SELECTOR, "a.sign-in-button"),  # кнопка "Войти" на главной
     'поле_почты': (By.CSS_SELECTOR, "input[type='email'][autocomplete='email']"),
