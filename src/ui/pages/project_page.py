@@ -34,19 +34,23 @@ class ProjectPage(BasePage):
             name_field.clear()
             name_field.send_keys(name)
 
+        # Если возникла ошибка дубликата ID — меняем имя так, чтобы изменились первые символы (ID‑префикс)
         if self.is_visible('ошибка_дубликата_id'):
-            with allure.step("4. Генерируем уникальное имя (ID занят)"):
-                unique_name = f"{name}_{random.randint(1000, 9999)}"
+            with allure.step("ID занят, генерируем уникальное имя"):
+                # Вставляем случайное число в начало названия, чтобы ID стал другим
+                unique_name = f"{random.randint(1000, 9999)}_{name}"
                 name_field.clear()
                 name_field.send_keys(unique_name)
+                # Ждём, пока ошибка исчезнет (система примет новый ID)
                 self.wait.until(lambda d: not self.is_visible('ошибка_дубликата_id'))
                 name = unique_name
 
-        with allure.step("5. Проверить, что кнопка активна и кликнуть"):
+        with allure.step("4. Дождаться активации кнопки и кликнуть"):
+            # Явное ожидание кликабельности защищает от ошибок, когда кнопка ещё не готова
             self.wait.until(lambda d: self.is_clickable('кнопка_добавить_проект_с_задачами'))
             self.click('кнопка_добавить_проект_с_задачами')
 
-        with allure.step("6. Дождаться появления проекта в шапке"):
+        with allure.step("5. Дождаться появления проекта в шапке"):
             self.wait.until(lambda d: name in d.find_element(*locators['название_проекта_в_шапке']).text)
         return name
 
@@ -63,12 +67,18 @@ class ProjectPage(BasePage):
 
     """
         Выбрать проект из списка, кликнув по его названию.
+        Ищет по частичному вхождению (учитывает возможные суффиксы вроде "(2)").
     """
     @allure.step("Выбрать проект {name}")
     def select_project(self, name: str) -> None:
+        # Ждём появления хотя бы одного проекта в списке
+        self.wait.until(lambda d: len(d.find_elements(*locators['проект_в_списке'])) > 0)
+        # Ищем нужный проект по частичному совпадению
         project = self.wait.until(lambda d: next(
-            (elem for elem in d.find_elements(*locators['проект_в_списке']) if elem.text == name), None
+            (elem for elem in d.find_elements(*locators['проект_в_списке']) if name in elem.text), None
         ))
+        if project is None:
+            raise AssertionError(f"Проект '{name}' не найден в списке")
         project.click()
         self.wait.until(lambda d: d.find_elements(*locators['кнопка_плюс_создать_доску']))
 

@@ -9,7 +9,7 @@
           а финальный объект создаётся именно через UI — это и проверяется.
 """
 
-import allure, pytest
+import allure, pytest, random
 from config import Config
 from typing import Any, Generator
 from src.ui.pages.login_page import LoginPage
@@ -114,12 +114,13 @@ class TestCreationUI:
     def test_create_board(self, authorized_driver) -> None:
         """Создать доску через UI и проверить её наличие."""
         with allure.step("1. Создание проекта через API"):
-            project_resp = self.projects.create("Проект для доски")
+            project_name = f"{random.randint(1000,9999)}_Проект_для_доски"
+            project_resp = self.projects.create(project_name)
             self.created_project_id = project_resp["id"]
 
         with allure.step("2. Переход в проект через UI"):
             project = ProjectPage(authorized_driver)
-            project.select_project("Проект для доски")
+            project.select_project(project_name)
 
         board = BoardPage(authorized_driver)
         with allure.step("3. Создание доски"):
@@ -136,7 +137,8 @@ class TestCreationUI:
     def test_create_column(self, authorized_driver) -> None:
         """Создать колонку через UI и убедиться, что она отображается."""
         with allure.step("1. Создание проекта и доски через API"):
-            project_resp = self.projects.create("Проект для колонки")
+            project_name = f"{random.randint(1000,9999)}_Проект_для_колонки"
+            project_resp = self.projects.create(project_name)
             self.created_project_id = project_resp["id"]
             board_resp = self.api_client.post("/api-v2/boards", {
                 "title": "Доска для колонки",
@@ -145,7 +147,7 @@ class TestCreationUI:
 
         with allure.step("2. Переход в проект и открытие доски через UI"):
             project = ProjectPage(authorized_driver)
-            project.select_project("Проект для колонки")
+            project.select_project(project_name)
             board = BoardPage(authorized_driver)
             board.open_board("Доска для колонки")
 
@@ -164,7 +166,8 @@ class TestCreationUI:
     def test_create_task(self, authorized_driver) -> None:
         """Создать задачу через UI и проверить её отображение."""
         with allure.step("1. Создание проекта, доски, колонки через API"):
-            project_resp = self.projects.create("Проект для задачи")
+            project_name = f"{random.randint(1000,9999)}_Проект_для_задачи"
+            project_resp = self.projects.create(project_name)
             self.created_project_id = project_resp["id"]
             board_resp = self.api_client.post("/api-v2/boards", {
                 "title": "Доска для задачи",
@@ -177,7 +180,7 @@ class TestCreationUI:
 
         with allure.step("2. Переход в проект и открытие доски через UI"):
             project = ProjectPage(authorized_driver)
-            project.select_project("Проект для задачи")
+            project.select_project(project_name)
             board = BoardPage(authorized_driver)
             board.open_board("Доска для задачи")
 

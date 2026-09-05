@@ -22,7 +22,7 @@ class BasePage:
     """Базовый класс-помощник для работы с UI-элементами"""
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(self.driver, 10)
+        self.wait = WebDriverWait(self.driver, 20)
 
     def find_element(self, locator_key):
         return self.wait.until(EC.visibility_of_element_located(locators[locator_key]))
