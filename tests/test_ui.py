@@ -7,12 +7,6 @@
         - TestCreationUI: тесты создания объектов на UI-слое.
           Для подготовки окружения часть объектов создаётся через API (чтобы ускорить тесты и не зависеть от UI-состояния),
           а финальный объект создаётся именно через UI — это и проверяется.
-
-    Ключевые особенности:
-        - Для очистки тестовых данных используется autouse-фикстура: она удаляет созданные проекты через API.
-        - В тестах используется authorized_driver — уже авторизованный браузер, чтобы не повторять логин каждый раз.
-        - Allure-метки (epic, story, feature, id) структурируют отчёт: по ним удобно фильтровать тесты и читать результаты.
-        - Все проверки сделаны через assert с понятными сообщениями об ошибке.
 """
 
 import allure, pytest
@@ -63,10 +57,8 @@ class TestLoginUI:
 
         with allure.step("1. Открыть страницу логина"):
             login.open()
-
         with allure.step("2. Ввести неверные данные"):
             login.login(Config.LOGIN, "wrong_password")
-
         with allure.step("3. Дождаться появления сообщения об ошибке"):
             assert login.wait.until(
                 lambda d: d.find_element(*locators['сообщение_ошибки'])
@@ -121,18 +113,17 @@ class TestCreationUI:
     @pytest.mark.ui
     def test_create_board(self, authorized_driver) -> None:
         """Создать доску через UI и проверить её наличие."""
-
         with allure.step("1. Создание проекта через API"):
             project_resp = self.projects.create("Проект для доски")
             self.created_project_id = project_resp["id"]
 
-        with allure.step("2. Переход на страницу проекта"):
-            authorized_driver.get(f"{Config.BASE_URL}/team/{Config.COMPANY_ID}/{project_resp['title']}")
-        board = BoardPage(authorized_driver)
+        with allure.step("2. Переход в проект через UI"):
+            project = ProjectPage(authorized_driver)
+            project.select_project("Проект для доски")
 
+        board = BoardPage(authorized_driver)
         with allure.step("3. Создание доски"):
             board.create_board("TestBoard")
-
         with allure.step("4. Проверка наличия доски"):
             assert board.is_board_present("TestBoard")
 
@@ -144,7 +135,6 @@ class TestCreationUI:
     @pytest.mark.ui
     def test_create_column(self, authorized_driver) -> None:
         """Создать колонку через UI и убедиться, что она отображается."""
-
         with allure.step("1. Создание проекта и доски через API"):
             project_resp = self.projects.create("Проект для колонки")
             self.created_project_id = project_resp["id"]
@@ -153,13 +143,15 @@ class TestCreationUI:
                 "projectId": self.created_project_id
             }).json()
 
-        with allure.step("2. Переход на страницу доски"):
-            authorized_driver.get(f"{Config.BASE_URL}/team/{Config.COMPANY_ID}/{project_resp['title']}/{board_resp['title']}")
-        column = ColumnPage(authorized_driver)
+        with allure.step("2. Переход в проект и открытие доски через UI"):
+            project = ProjectPage(authorized_driver)
+            project.select_project("Проект для колонки")
+            board = BoardPage(authorized_driver)
+            board.open_board("Доска для колонки")
 
+        column = ColumnPage(authorized_driver)
         with allure.step("3. Создание колонки"):
             column.create_column("Новые задачи")
-
         with allure.step("4. Проверка наличия колонки"):
             assert column.is_column_present("Новые задачи")
 
@@ -171,7 +163,6 @@ class TestCreationUI:
     @pytest.mark.ui
     def test_create_task(self, authorized_driver) -> None:
         """Создать задачу через UI и проверить её отображение."""
-
         with allure.step("1. Создание проекта, доски, колонки через API"):
             project_resp = self.projects.create("Проект для задачи")
             self.created_project_id = project_resp["id"]
@@ -184,12 +175,14 @@ class TestCreationUI:
                 "boardId": board_resp["id"]
             }).json()
 
-        with allure.step("2. Переход на страницу доски"):
-            authorized_driver.get(f"{Config.BASE_URL}/team/{Config.COMPANY_ID}/{project_resp['title']}/{board_resp['title']}")
-        task = TaskPage(authorized_driver)
+        with allure.step("2. Переход в проект и открытие доски через UI"):
+            project = ProjectPage(authorized_driver)
+            project.select_project("Проект для задачи")
+            board = BoardPage(authorized_driver)
+            board.open_board("Доска для задачи")
 
+        task = TaskPage(authorized_driver)
         with allure.step("3. Создание задачи"):
             task.create_task("Тестовая задача")
-
         with allure.step("4. Проверка наличия задачи"):
             assert task.is_task_present("Тестовая задача")

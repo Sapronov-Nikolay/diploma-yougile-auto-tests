@@ -35,16 +35,19 @@ class BoardPage(BasePage):
     """
     @allure.step("Создать доску через UI: название = {name}")
     def create_board(self, name: str) -> None:
-        with allure.step("Открыть меню создания доски"):
+
+        with allure.step("1. Открыть меню создания доски"):
             self.click('кнопка_плюс_создать_доску')
-        with allure.step("Выбрать «Доска с задачами»"):
+
+        with allure.step("2. Выбрать «Доска с задачами»"):
             self.click('пункт_меню_доска_с_задачами')
-        with allure.step("Ввести название доски"):
+
+        with allure.step("3. Ввести название доски"):
             self.send_keys('поле_название_доски', name)
             field = self.find_element('поле_название_доски')
             field.send_keys(Keys.ENTER)
 
-        with allure.step("Дождаться появления вкладки"):
+        with allure.step("4. Дождаться появления вкладки"):
             self.wait.until(
                 lambda d: any(
                     name in tab.get_attribute("title")
@@ -52,6 +55,16 @@ class BoardPage(BasePage):
                     if tab.get_attribute("title")
                 )
             )
+
+    @allure.step("Открыть доску с названием {name}")
+    def open_board(self, name: str) -> None:
+        """Кликнуть по вкладке доски с указанным названием."""
+        tabs = self.driver.find_elements(*locators['вкладка_доски'])
+        for tab in tabs:
+            if tab.get_attribute('title') == name:
+                tab.click()
+                return
+        raise AssertionError(f"Доска с названием '{name}' не найдена")
 
     @allure.step("Проверить, что доска с названием '{name}' отображается на странице")
     def is_board_present(self, name: str) -> bool:
