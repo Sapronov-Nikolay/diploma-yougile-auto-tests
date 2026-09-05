@@ -14,7 +14,7 @@ import pytest, datetime, os, allure
 from selenium import webdriver
 from config import Config       # Класс с настройками (логины, URL и т.д.)
 from src.api.client import YouGileApiClient     # Клиент для API-тестов
-from src.ui.locators import LOCATORS
+from src.ui.locators import locators
 from src.ui.pages.login_page import LoginPage
 
 Config.ensure_dirs()  # Создаём папку для скриншотов при старте. Без них если тест отскринит падение, то скрин не сохранится
@@ -60,7 +60,7 @@ def authorized_driver(driver):
     with allure.step("Выполнить вход"):
         login_page.login(Config.LOGIN, Config.PASSWORD)
     with allure.step("Дождаться появления заголовка 'Моя компания'"):
-        driver.find_element(*LOCATORS['заголовок_моя_компания'])
+        driver.find_element(*locators['заголовок_моя_компания'])
     return driver   # Теперь мы на /team/ с открытым разделом "Моя компания"
 
 
@@ -79,7 +79,7 @@ def pytest_runtest_makereport(item, call):
         # Проверяем, есть ли у тестов фикстура driver
         driver = None
         if "driver" in item.funcargs: driver = item.funcargs["driver"]
-        elif "autorized_driver" in item.funcargs: driver = item.funcargs["authorized_driver"]
+        elif "authorized_driver" in item.funcargs: driver = item.funcargs["authorized_driver"]
 
         if driver is not None:
             # Имя теста без квадратных скобок

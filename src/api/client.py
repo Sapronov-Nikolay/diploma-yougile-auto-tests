@@ -61,7 +61,7 @@ class YouGileApiClient:
     """Формирует заголовки для фвторизованного запроса."""
     def _headers(self):
         return {
-            "content-Type": "application/json",
+            "Content-Type": "application/json",
             "Authorization": f"Bearer {self._ensure_auth()}"
         }
 
