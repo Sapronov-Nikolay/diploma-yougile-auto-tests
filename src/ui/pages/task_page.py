@@ -32,7 +32,7 @@ class TaskPage(BasePage):
 
         with allure.step("2. Дождаться появления заголовка задачи"):
             self.wait.until(lambda d: any(
-                name == title.text for title in d.find_elements(*locators['заголовок_звдачи'])
+                name == title.text for title in d.find_elements(*locators['заголовок_задачи'])
             ))
 
     """Проверить, отображается ли задача с указанным названием на доске"""

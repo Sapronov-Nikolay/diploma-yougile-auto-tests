@@ -16,6 +16,8 @@ from config import Config       # Класс с настройками (логи
 from src.api.client import YouGileApiClient     # Клиент для API-тестов
 from src.ui.locators import locators
 from src.ui.pages.login_page import LoginPage
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 ALL_CREATED_PROJECT_IDS = []
 """Глобальный список ID всех проектов, созданных в ходе API-тестов"""
@@ -63,7 +65,7 @@ def authorized_driver(driver):
     with allure.step("Выполнить вход"):
         login_page.login(Config.LOGIN, Config.PASSWORD)
     with allure.step("Дождаться появления заголовка 'Моя компания'"):
-        driver.find_element(*locators['заголовок_моя_компания'])
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located(locators['заголовок_моя_компания']))
     return driver   # Теперь мы на /team/ с открытым разделом "Моя компания"
 
 
@@ -112,7 +114,10 @@ def pytest_sessionfinish(session, exitstatus):
         login_page.open()
         login_page.login(Config.LOGIN, Config.PASSWORD)
         project_page = ProjectPage(cleanup_driver)
-        project_page.open_archive()
+        try:
+            project_page.open_archive()
+        except Exception:
+            pass
         # Удаляем по конкретным ID
         project_page.delete_archived_projects_by_ids(ALL_CREATED_PROJECT_IDS)
         cleanup_driver.quit()

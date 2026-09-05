@@ -10,7 +10,7 @@ locators = {
     'сообщение_ошибки': (By.CSS_SELECTOR, ".login-error"),
 
     # Заголовок "Моя компания" после успешного входа
-    'заголовок_моя_компания': (By.CSS_SELECTOR, "div.text-sm-semibold.text-panel-text-primary.cursor-default"),
+    'заголовок_моя_компания': (By.CSS_SELECTOR, "[data-testid='my-company-header]"),
 
     # Левая панель - проекты (кнопка "+" рядом с "Моя компания")
     'кнопка_добавить_проект_в_меню': (By.CSS_SELECTOR, "[data-testid='add-project-button']"),
