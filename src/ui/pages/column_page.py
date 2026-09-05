@@ -29,7 +29,7 @@ class ColumnPage(BasePage):
             self.click('кнопка_создать_колонку')
 
         with allure.step("2. Ввести название колонки"):
-            self.send_keys('поле_название_колонки')
+            self.send_keys('поле_название_колонки', name)
             field = self.find_element('поле_название_колонки')
             field.send_keys(Keys.ENTER)
 
