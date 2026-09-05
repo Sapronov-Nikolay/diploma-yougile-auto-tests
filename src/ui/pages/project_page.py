@@ -3,6 +3,9 @@
     Страница проектов в YouGile (UI-слой).
 
     Page Object для работы с проектами: создание, выбор, проверка наличия и получения ID.
+    Также работа с архивом проектов (открытие архива и удаление проектов по ID.
+    Особенности реализации физического удаления:
+        Удаляет архивированные проекты, чьи ID совпадают с переданными всписок.
 
     Ключевые особенности реализации:
         - Обработка ситуации с дублированием названия: если система показывает ошибку,
@@ -13,10 +16,11 @@
         и не зависит от формата адресной строки.
 """
 
-from typing import Optional
+from typing import Optional, List
 import random, allure
 from src.ui.base_page import BasePage
 from src.ui.locators import locators
+from selenium.webdriver.common.by import By
 
 class ProjectPage(BasePage):
 
@@ -100,3 +104,26 @@ class ProjectPage(BasePage):
             if project.text.strip() == name:
                 return project.get_attribute("data-itemid")
         return None
+
+    @allure.step("Открыть блок «Архивированные проекты»")
+    def open_archive(self) -> None:
+        archive_header = self.driver.find_element(*locators['архивный_заголовок'])
+        archive_header.click()
+        self.wait.until(lambda d: d.find_elements(*locators['проект_в_архиве']))
+
+    @allure.step("Удалить архивированные проекты по ID {project_ids}")
+    def delete_archived_projects_by_ids(self, project_ids: List[str]) -> None:
+        """
+        Удаляет архивированные проекты, чьи ID совпадают с переданными.
+        """
+        cards = self.driver.find_elements(*locators['проект_в_архиве'])
+        for card in cards:
+            card_id = card.get_attribute("data-itemid")
+            if card_id in project_ids:
+                menu = card.find_element(*locators['проект_три_точки'])
+                menu.click()
+                delete_option = self.driver.find_element(*locators['пункт_меню_удалить'])
+                delete_option.click()
+                confirm = self.driver.find_element(*locators['кнопка_подтвердить_удаление'])
+                confirm.click()
+                self.wait.until(lambda d: card not in d.find_elements(*locators['проект_в_архиве']))

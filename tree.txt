@@ -1,10 +1,9 @@
 📁 diploma-yougile-auto-tests/
-📊 Итог: Папок: 8, Файлов: 27, Уровней вложенности: 4
+📊 Итог: Папок: 8, Файлов: 26, Уровней вложенности: 4
 
 ├── README.md
 ├── config.py
 ├── conftest.py
-├── help.txt
 ├── key_manager.py
 ├── requirements.txt
 ├── src
@@ -36,4 +35,4 @@
 │   └── test_ui.py
 ├── tree.txt
 └── venv
-    └── ... [x 3551 files]
+    └── ... [x 5717 files]
