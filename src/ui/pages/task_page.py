@@ -43,5 +43,5 @@ class TaskPage(BasePage):
     """Проверить, отображается ли задача с указанным названием на доске"""
     @allure.step("Проверить, что задача с названием '{name}' отображается")
     def is_task_present(self, name: str) -> bool:
-        titles = self.driver.find_elemetns(*locators['заголовок_задачи'])
+        titles = self.driver.find_elements(*locators['заголовок_задачи'])
         return any(name == title.text for title in titles)
