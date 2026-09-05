@@ -16,7 +16,7 @@
 import allure
 from selenium.webdriver.common.keys import Keys
 from src.ui.base_page import BasePage
-from src.ui.locators import LOCATORS
+from src.ui.locators import locators
 
 """
     Page Object для страницы досок в YouGile.
@@ -35,25 +35,29 @@ class BoardPage(BasePage):
     """
     @allure.step("Создать доску через UI: название = {name}")
     def create_board(self, name: str) -> None:
-        self.click('кнопка_плюс_создать_доску')
-        self.click('пункт_меню_доска_с_задачами')
-        self.send_keys('поле_название_доски', name)
-        field = self.find_element('поле_название_доски')
-        field.send_keys(Keys.ENTER)
+        with allure.step("Открыть меню создания доски"):
+            self.click('кнопка_плюс_создать_доску')
+        with allure.step("Выбрать «Доска с задачами»"):
+            self.click('пункт_меню_доска_с_задачами')
+        with allure.step("Ввести название доски"):
+            self.send_keys('поле_название_доски', name)
+            field = self.find_element('поле_название_доски')
+            field.send_keys(Keys.ENTER)
 
-        self.wait.until(
-            lambda d: any(
-                name in tab.get_attribute("title")
-                for tab in d.find_elements(*LOCATORS['вкладка_доски'])
-                if tab.get_attribute("title")
+        with allure.step("Дождаться появления вкладки"):
+            self.wait.until(
+                lambda d: any(
+                    name in tab.get_attribute("title")
+                    for tab in d.find_elements(*locators['вкладка_доски'])
+                    if tab.get_attribute("title")
+                )
             )
-        )
 
-    @allure.step("проверить, что доска с названием '{name}' отображается на странице")
+    @allure.step("Проверить, что доска с названием '{name}' отображается на странице")
     def is_board_present(self, name: str) -> bool:
         """
             Проверка наличия доски по вкладке (data-testid='board-tab').
             Используем атрибут title, который всегда содержит название доски.
         """
-        tabs = self.driver.find_elements(*LOCATORS['вкладка_доски'])
+        tabs = self.driver.find_elements(*locators['вкладка_доски'])
         return any(name in tab.get_attribute("title") for tab in tabs if tab.get_attribute("title"))

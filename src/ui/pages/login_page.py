@@ -13,7 +13,6 @@
 import allure
 from config import Config
 from src.ui.base_page import BasePage
-from src.ui.locators import LOCATORS
 
 """Page Object для страницы авторизации YouGile."""
 class LoginPage(BasePage):
@@ -28,8 +27,7 @@ class LoginPage(BasePage):
         self.click('кнопка_перейти_к_входу')
 
     """Выполнить вход в систему по email и паролю."""
-
-    @allure.step("Выполнить вход")
+    @allure.step("Ввести логин {email} и пароль, нажать Войти")
     def login(self, email: str, password: str) -> None:
         self.find_element('поле_почты') # Ждём появления полей
         self.send_keys('поле_почты', email)

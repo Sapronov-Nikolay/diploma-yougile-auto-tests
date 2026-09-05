@@ -9,7 +9,7 @@
     надо ли сначала получить токен, и подставляет его в заголовки.
 """
 
-import requests
+import requests, allure
 from config import Config
 
 """Класс для взаимодействия с API YouGile."""
@@ -26,34 +26,36 @@ class YouGileApiClient:
         # Если CompanyId не задан в .env, получаем его автоматически
         if self._token is None:
             if not self.company_id:
-                resp = requests.post(
-                    f"{self.base_url}/api-v2/auth/companies",
-                    json={
-                        "login": self.login,
-                        "password": self.password
-                    }
-                )
-                resp.raise_for_status()
-                data = resp.json()
-                if not data:
-                    raise ValueError("API вернул пустой список компаний. Проверьте логин/пароль.")
-                self.company_id = data[0]["id"]
+                with allure.step("получить CompanyId через API"):
+                    resp = requests.post(
+                        f"{self.base_url}/api-v2/auth/companies",
+                        json={
+                            "login": self.login,
+                            "password": self.password
+                        }
+                    )
+                    resp.raise_for_status()
+                    data = resp.json()
+                    if not data:
+                        raise ValueError("API вернул пустой список компаний. Проверьте логин/пароль.")
+                    self.company_id = data[0]["id"]
 
             # Приоритет: если в .env есть CURRENT_KEY, используем его.
             if Config.CURRENT_KEY:
                 self._token = Config.CURRENT_KEY
             else:
-                # Если токена нет — запрашиваем новый ключ через логин/пароль
-                resp = requests.post(
-                    f"{self.base_url}/api-v2/auth/keys",
-                    json={
-                        "login": self.login,
-                        "password": self.password,
-                        "companyId": self.company_id
-                    }
-                )
-                resp.raise_for_status()
-                self._token = resp.json()["key"]
+                with allure.step("Создать новый API-ключ"):
+                    # Если токена нет — запрашиваем новый ключ через логин/пароль
+                    resp = requests.post(
+                        f"{self.base_url}/api-v2/auth/keys",
+                        json={
+                            "login": self.login,
+                            "password": self.password,
+                            "companyId": self.company_id
+                        }
+                    )
+                    resp.raise_for_status()
+                    self._token = resp.json()["key"]
         return self._token
 
     """Формирует заголовки для фвторизованного запроса."""
@@ -64,17 +66,21 @@ class YouGileApiClient:
         }
 
     """Выполнить POST-запрос к API."""
+    @allure.step("API. Выполнить POST запрос на {endpoint}")
     def post(self, endpoint, payload):
         return requests.post(f"{self.base_url}{endpoint}", json=payload, headers=self._headers())
 
     """Выполнить GET-запрос."""
+    @allure.step("API. Выполнить GET запрос на {endpoint}")
     def get(self, endpoint):
         return requests.get(f"{self.base_url}{endpoint}", headers=self._headers())
 
     """Выполнить PUT-запрос (обычно для обновления ресурсов)."""
+    @allure.step("API. Выполнить PUT запрос на {endpoint}")
     def put(self, endpoint, payload):
         return requests.put(f"{self.base_url}{endpoint}", json=payload, headers=self._headers())
 
     """Выполнить DELETE-запрос (обычно для удаления ресурсов)."""
+    @allure.step("API. Выполнить DELETE запрос на {endpoint}")
     def delete(self, endpoint):
         return requests.delete(f"{self.base_url}{endpoint}", headers=self._headers())
