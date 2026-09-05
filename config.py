@@ -14,11 +14,11 @@ from dotenv import load_dotenv  # Библиотека для загрузки �
 """
 load_dotenv()
 class Config:
-    BASE_URL = os.getenv("YOUGILE_URL", "https://api.yougille.com")
-    LOGIN = os.getenv("YOUGILLE_LOGIN")
-    PASSWORD = os.getenv("YOUGILLE_PASSWORD")
-    COMPANY_ID = os.getenv("YOUGILLE_COMPANY_ID")
-    CURRENT_KEY = os.getenv("YOUGILLE_CURRENT_KEY")
+    BASE_URL = os.getenv("YOUGILE_URL", "https://ru.yougile.com")
+    LOGIN = os.getenv("YOUGILE_LOGIN")
+    PASSWORD = os.getenv("YOUGILE_PASSWORD")
+    COMPANY_ID = os.getenv("YOUGILE_COMPANY_ID")
+    CURRENT_KEY = os.getenv("YOUGILE_CURRENT_KEY")
 
 
 

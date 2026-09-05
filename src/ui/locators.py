@@ -2,8 +2,8 @@
 from selenium.webdriver.common.by import By
 
 locators = {
-    # Страница авторизации (https://ru.yougile.com/team/)
-    'кнопка_перейти_к_входу': (By.CSS_SELECTOR, "a.sign-in-button"),  # кнопка "Войти" на главной
+    # Страница авторизации (главная -> /team/)
+    'кнопка_перейти_к_входу': (By.CSS_SELECTOR, "a.sign-in-button"),
     'поле_почты': (By.CSS_SELECTOR, "input[type='email'][autocomplete='email']"),
     'поле_пароля': (By.CSS_SELECTOR, "input[type='password'][autocomplete='current-password']"),
     'кнопка_войти': (By.XPATH, "//div[@role='button' and .//div[text()='Войти']]"),
@@ -18,12 +18,13 @@ locators = {
 
     # Модальное окно создания проекта
     'поле_название_проекта': (By.CSS_SELECTOR, "input[placeholder='Введите название проекта…']"),
-    'поле_id_проекта': (By.CSS_SELECTOR, "div.w-220 input[type='text']"),  # второе поле (ID-префикс)
+    'поле_id_проекта': (By.CSS_SELECTOR, "div.w-220 input[type='text']"),
     'кнопка_добавить_проект_с_задачами': (By.XPATH, "//div[contains(@class,'bg-action-default') and contains(.,'Добавить проект с задачами')]"),
     'кнопка_добавить_проект_с_задачами_disabled': (By.XPATH, "//div[contains(@class,'pointer-events-none') and contains(.,'Добавить проект с задачами')]"),
     'ошибка_дубликата_id': (By.CSS_SELECTOR, ".text-status-error.micro-regular"),
 
-    # Список проектов слева
+    # Список проектов слева (сам элемент с data-itemid)
+    'проект_в_списке_с_id': (By.CSS_SELECTOR, "[data-testid='project-item']"),
     'проект_в_списке': (By.CSS_SELECTOR, "[data-testid='project-item'] .truncate"),
     'выбранный_проект_в_списке': (By.CSS_SELECTOR, "[data-testid='project-item'][class*='bg-panel-background-active']"),
 
