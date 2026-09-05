@@ -11,7 +11,7 @@
         - Allure‑метки (epic, story, feature, id и т.д.) помогают структурировать отчёт и быстро находить нужные тесты.
 """
 
-import allure, pytest
+import allure, pytest, random
 from config import Config
 from typing import Any, Generator
 from src.api.client import YouGileApiClient
@@ -91,13 +91,14 @@ class TestProjectsAPI:
         projects = ProjectsEndpoint(api_client)
 
         with allure.step("1. Создать проект"):
-            resp = projects.create("API_Test_Project")
+            unique_name = f"{random.randint(1000,9999)}_API_Test_Project"
+            resp = projects.create(unique_name)
             self.created_project_ids.append(resp["id"])
             ALL_CREATED_PROJECT_IDS.append(resp["id"])
 
         with allure.step("2. Проверить, что проект создан"):
             assert resp["id"] is not None
-            assert resp["title"] == "API_Test_Project"
+            assert resp["title"] == unique_name
 
     """Создать проект, получить его по ID и проверить совпадение данных."""
     @allure.id("API-04")
@@ -110,7 +111,8 @@ class TestProjectsAPI:
         projects = ProjectsEndpoint(api_client)
 
         with allure.step("1. Создать проект для проверки"):
-            created = projects.create("API_Test_Project")
+            unique_name = f"{random.randint(1000, 9999)}_API_Test_Project"
+            created = projects.create(unique_name)
             self.created_project_ids.append(created["id"])
             ALL_CREATED_PROJECT_IDS.append(created["id"])
 
@@ -119,7 +121,7 @@ class TestProjectsAPI:
 
         with allure.step("3. Проверить совпадение данных"):
             assert acquire["id"] == created["id"]
-            assert acquire["title"] == "API_Test_Project"
+            assert acquire["title"] == unique_name
 
     """Обновить название проекта и убедиться, что изменение применилось."""
     @allure.id("API-05")
@@ -132,15 +134,17 @@ class TestProjectsAPI:
         projects = ProjectsEndpoint(api_client)
 
         with allure.step("1. Создать проект"):
-            created = projects.create("Old_name_035")
+            unique_name = f"{random.randint(1000, 9999)}_Old_name"
+            created = projects.create(unique_name)
             self.created_project_ids.append(created["id"])
             ALL_CREATED_PROJECT_IDS.append(created["id"])
 
         with allure.step("2. Обновить название проекта"):
-            updated = projects.update(created["id"], title="New_name_036")
+            new_name = f"{random.randint(1000, 9999)}_New_name"
+            updated = projects.update(created["id"], title=new_name)
 
         with allure.step("3. проверить, что название изменилось"):
-            assert updated["title"] == "New_name_036"
+            assert updated["title"] == new_name
 
     """Удалить проект и проверить, что флаг deleted установлен в True."""
     @allure.id("API-06")
@@ -153,7 +157,8 @@ class TestProjectsAPI:
         projects = ProjectsEndpoint(api_client)
 
         with allure.step("1. Создать проект для удаления"):
-            created = projects.create("API_Delete_Project")
+            unique_name = f"{random.randint(1000, 9999)}_API_Delete_Project"
+            created = projects.create(unique_name)
             self.created_project_ids.append(created["id"])
             ALL_CREATED_PROJECT_IDS.append(created["id"])
 
