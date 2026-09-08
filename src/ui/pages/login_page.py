@@ -13,6 +13,7 @@
 import allure
 from config import Config
 from src.ui.base_page import BasePage
+from src.ui.locators import locators
 
 """Page Object для страницы авторизации YouGile."""
 class LoginPage(BasePage):
@@ -33,3 +34,13 @@ class LoginPage(BasePage):
         self.send_keys('поле_почты', email)
         self.send_keys('поле_пароля', password)
         self.click('кнопка_войти')
+
+    def is_mainpage(self):
+        return self.wait.until(
+            lambda d: d.find_element(*locators['заголовок_моя_компания'])
+        ), "Не удалось войти в систему"
+
+    def is_errorpassword(self):
+        return self.wait.until(
+                lambda d: d.find_element(*locators['сообщение_ошибки'])
+            ), "Ошибка входа не отобразилась"

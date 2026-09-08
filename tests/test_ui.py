@@ -41,9 +41,7 @@ class TestLoginUI:
         with allure.step("2. Выполнить вход"):
             login.login(Config.LOGIN, Config.PASSWORD)
         with allure.step("3. Дождаться появления раздела 'Моя компания'"):
-            assert login.wait.until(
-                lambda d: d.find_element(*locators['заголовок_моя_компания'])
-            ), "Не удалось войти в систему"
+            assert login.is_mainpage()
 
     @allure.id("UI-02")
     @allure.story("Авторизация")
@@ -60,9 +58,7 @@ class TestLoginUI:
         with allure.step("2. Ввести неверные данные"):
             login.login(Config.LOGIN, "wrong_password")
         with allure.step("3. Дождаться появления сообщения об ошибке"):
-            assert login.wait.until(
-                lambda d: d.find_element(*locators['сообщение_ошибки'])
-            ), "Ошибка входа не отобразилась"
+            assert login.is_errorpassword()
 
 @allure.epic("UI")
 @allure.severity(allure.severity_level.NORMAL)
@@ -113,6 +109,7 @@ class TestCreationUI:
     @pytest.mark.ui
     def test_create_board(self, authorized_driver) -> None:
         """Создать доску через UI и проверить её наличие."""
+
         with allure.step("1. Создание проекта через API"):
             project_name = f"{random.randint(1000,9999)}_Проект_для_доски"
             project_resp = self.projects.create(project_name)

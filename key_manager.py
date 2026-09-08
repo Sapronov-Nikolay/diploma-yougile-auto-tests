@@ -40,24 +40,24 @@ def get_all_keys():
     return resp.json()
 
 
-"""
-    Удаляет один выбранный API-ключ по его значению
-    key-value: с самим ключом, который хотим удалить
-    current_key: ключ, от имени которого делаем удаление (должен быть активным)
-    Возвращает True, если удаление прошло успешно (HTTP 200), иначе False.
-"""
 def delete_key(key_value, current_key):
+    """
+        Удаляет один выбранный API-ключ по его значению
+        key-value: с самим ключом, который хотим удалить
+        current_key: ключ, от имени которого делаем удаление (должен быть активным)
+        Возвращает True, если удаление прошло успешно (HTTP 200), иначе False.
+    """
     url = f"{BASE_URL}/api-v2/auth/keys/{key_value}"
     headers = {"Authorization": f"Bearer {current_key}"}
     resp = requests.delete(url, headers=headers)
     return resp.status_code == 200
 
 
-"""
-    Выводит читаемый список всех API-ключей.
-    Помечает текущий ключ пометкой "← ТЕКУЩИЙ".
-"""
 def list_keys():
+    """
+        Выводит читаемый список всех API-ключей.
+        Помечает текущий ключ пометкой "← ТЕКУЩИЙ".
+    """
     try:
         keys = get_all_keys()
     except Exception as e:
@@ -83,13 +83,13 @@ def list_keys():
     print("=" * 70 + "\n")
 
 
-"""
-    Очищает старые API-ключи, оставляя только один (keep_key).
-     Если keep_key не передан, то используется CURRENT_KEY из .env.
-     Если и его нет - создаётся новый ключ и сохраняется как текущий.
-     И обновляет .env: YOUGILE_CURRENT_KEY = <новый ключ>
-"""
 def clean_keys(keep_key=None):
+    """
+        Очищает старые API-ключи, оставляя только один (keep_key).
+        Если keep_key не передан, то используется CURRENT_KEY из .env.
+        Если и его нет - создаётся новый ключ и сохраняется как текущий.
+        И обновляет .env: YOUGILE_CURRENT_KEY = <новый ключ>
+    """
     # Логика выбора ключа, которую надо оставить
     if keep_key is None:
         keep_key = CURRENT_KEY
