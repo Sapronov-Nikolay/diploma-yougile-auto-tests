@@ -65,7 +65,7 @@ def authorized_driver(driver):
     with allure.step("Выполнить вход"):
         login_page.login(Config.LOGIN, Config.PASSWORD)
     with allure.step("Дождаться появления заголовка 'Моя компания'"):
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located(locators['заголовок_моя_компания']))
+        assert login_page.is_mainpage()
     return driver   # Теперь мы на /team/ с открытым разделом "Моя компания"
 
 

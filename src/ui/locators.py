@@ -26,6 +26,7 @@ locators = {
     # Список проектов слева (сам элемент с data-itemid)
     'проект_в_списке_с_id': (By.CSS_SELECTOR, "[data-testid='project-item']"),
     'проект_в_списке': (By.CSS_SELECTOR, "[data-testid='project-item'] .truncate"),
+    'первый_проект_списка': (By.XPATH, "//div[@data-testid='project-item'][1]"),
     'выбранный_проект_в_списке': (By.CSS_SELECTOR, "[data-testid='project-item'][class*='bg-panel-background-active']"),
 
     # Верхняя панель проекта
@@ -60,4 +61,5 @@ locators = {
 
     # НОВЫЙ ЛОКАТОР (добавлен для поиска карточки по названию)
     'заголовок_проекта_в_карточке': (By.CSS_SELECTOR, "[data-testid='project-title']"),
+
 }
