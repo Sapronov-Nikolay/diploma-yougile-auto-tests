@@ -3,6 +3,8 @@
 Thumbs.db
 *.log
 *.tmp
+desktop.ini
+tree.txt
 
 # IDE
 .idea/
