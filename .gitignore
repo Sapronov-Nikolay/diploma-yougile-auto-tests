@@ -3,6 +3,8 @@
 Thumbs.db
 *.log
 *.tmp
+desktop.ini
+tree.txt
 
 # IDE
 .idea/
@@ -19,6 +21,11 @@ __pycache__/
 venv/
 env/
 .env
+
+# Скриншоты (не заливаем на GitHub)
+screens/
+screenshots/
+screen_ui/
 
 # Allure
 allure-results/
