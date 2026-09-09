@@ -12,6 +12,8 @@ from typing import Optional, List
 import random, allure
 from src.ui.base_page import BasePage
 from src.ui.locators import locators
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 
 class ProjectPage(BasePage):
 
@@ -54,10 +56,18 @@ class ProjectPage(BasePage):
             self.wait.until(lambda d: name in d.find_element(*locators['название_проекта_в_шапке']).text)
         return name
 
+    @allure.step("Открыть проект по ID: {project_id}")
+    def open_by_id(self, project_id: str) -> None:
+        """Перейти на страницу проекта напрямую по его ID."""
+        from config import Config
+        self.driver.get(f"{Config.BASE_URL}/team/projects/{project_id}")
+        # Дожидаемся появления шапки проекта
+        self.wait.until(lambda d: d.find_elements(*locators['название_проекта_в_шапке']))
+
     """
         Проверить, отображается ли проект с указанным названием в списке проектов (с ожиданием).
     """
-    @allure.step("Проверить наличие проекта {name}")
+    @allure.step("Проверить наличие проекта {name} в списке")
     def is_project_present(self, name: str) -> bool:
         try:
             self.wait.until(lambda d: any(name in elem.text for elem in d.find_elements(*locators['проект_в_списке'])))
@@ -69,17 +79,21 @@ class ProjectPage(BasePage):
         Выбрать проект из списка, кликнув по его названию.
         Ищет по частичному вхождению (учитывает возможные суффиксы вроде "(2)").
     """
-    @allure.step("Выбрать проект {name}")
+    @allure.step("Выбрать проект {name} (клик по карточке)")
     def select_project(self, name: str) -> None:
         # Ждём появления хотя бы одного проекта в списке
-        self.wait.until(lambda d: len(d.find_elements(*locators['проект_в_списке'])) > 0)
-        # Ищем нужный проект по частичному совпадению
-        project = self.wait.until(lambda d: next(
-            (elem for elem in d.find_elements(*locators['проект_в_списке']) if name in elem.text), None
-        ))
-        if project is None:
+        self.wait.until(lambda d: len(d.find_elements(*locators['проект_в_списке_с_id'])) > 0)
+        # Ищем проект по тексту и кликаем по родительскому элементу
+        project_item = None
+        for item in self.driver.find_elements(*locators['проект_в_списке_с_id']):
+            title_elem = item.find_element(*locators['проект_в_списке'])
+            if name in title_elem.text:
+                project_item = item
+                break
+        if project_item is None:
             raise AssertionError(f"Проект '{name}' не найден в списке")
-        project.click()
+        project_item.click()
+        # Ждём загрузки страницы проекта
         self.wait.until(lambda d: d.find_elements(*locators['кнопка_плюс_создать_доску']))
 
     """
@@ -87,28 +101,34 @@ class ProjectPage(BasePage):
     """
     @allure.step("Получить ID проекта из DOM по имени {name}")
     def get_project_id_from_dom(self, name: str) -> Optional[str]:
-        projects = self.driver.find_elements(*locators['проект_в_списке_с_id'])
-        for project in projects:
+        for project in self.driver.find_elements(*locators['проект_в_списке_с_id']):
             if project.text.strip() == name:
                 return project.get_attribute("data-itemid")
         return None
 
-    @allure.step("Открыть блок «Архивированные проекты»")
-    def open_archive(self) -> None:
-        archive_header = self.driver.find_element(*locators['архивный_заголовок'])
-        archive_header.click()
-        self.wait.until(lambda d: d.find_elements(*locators['проект_в_архиве']))
+    @allure.step("Перейти на страницу проектов компании (/team/)")
+    def go_to_company_projects(self) -> None:
+        from config import Config
+        self.driver.get(Config.BASE_URL + "/team/")
+        self.wait.until(lambda d: d.find_elements(*locators['панель_проектов_компании']))
 
-    @allure.step("Удалить архивированные проекты по ID {project_ids}")
-    def delete_archived_projects_by_ids(self, project_ids: List[str]) -> None:
-        cards = self.driver.find_elements(*locators['проект_в_архиве'])
-        for card in cards:
-            card_id = card.get_attribute("data-itemid")
-            if card_id in project_ids:
-                menu = card.find_element(*locators['проект_три_точки'])
-                menu.click()
-                delete_option = self.driver.find_element(*locators['пункт_меню_удалить'])
-                delete_option.click()
-                confirm = self.driver.find_element(*locators['кнопка_подтвердить_удаление'])
-                confirm.click()
-                self.wait.until(lambda d: card not in d.find_elements(*locators['проект_в_архиве']))
+    @allure.step("Удалить проект по ID {project_id} (физически)")
+    def delete_project_by_id(self, project_id: str) -> None:
+        with allure.step("1. Находим карточку проекта на странице /team/"):
+            card_selector = f"[data-testid='project-card'][data-itemid='{project_id}']"
+            try:
+                card = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, card_selector)))
+            except:
+            # Карточка не найдена — проект уже удалён, выходим
+                return
+        with allure.step("2. Открываем меню"):
+            menu_btn = card.find_element(*locators['проект_карточка_меню'])
+            menu_btn.click()
+        with allure.step("3. Выбираем 'Удалить'"):
+            delete_option = self.wait.until(EC.element_to_be_clickable(locators['пункт_меню_удалить_проект']))
+            delete_option.click()
+        with allure.step("4. Подтверждаем удаление"):
+            confirm_btn = self.wait.until(EC.element_to_be_clickable(locators['кнопка_подтвердить_удаление_проекта']))
+            confirm_btn.click()
+        with allure.step("5. Ждём исчезновения карточки"):
+            self.wait.until(EC.staleness_of(card))

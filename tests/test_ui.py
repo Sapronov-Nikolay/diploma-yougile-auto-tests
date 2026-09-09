@@ -32,10 +32,9 @@ class TestLoginUI:
     @allure.title("Успешная авторизация")
     @allure.description("Проверка входа с валидными данными")
     @pytest.mark.ui
-    def test_login_success(self, driver) -> None:
+    def test_login_success(self, driver):
         """Проверить, что пользователь успешно авторизуется с корректными логином и паролем."""
         login = LoginPage(driver)
-
         with allure.step("1. Открыть страницу логина"):
             login.open()
         with allure.step("2. Выполнить вход"):
@@ -49,7 +48,7 @@ class TestLoginUI:
     @allure.title("Авторизация с неверным паролем")
     @allure.description("Проверка отображения ошибки при неверном пароле")
     @pytest.mark.ui
-    def test_login_wrong_password(self, driver) -> None:
+    def test_login_wrong_password(self, driver):
         """Проверить, что при неверном пароле отображается сообщение об ошибке."""
         login = LoginPage(driver)
 
@@ -69,10 +68,6 @@ class TestCreationUI:
     def setup_api(self, api_client: YouGileApiClient) -> Generator[None, Any, None]:
         """
             Фикстура для подготовки и очистки тестовых данных.
-
-            Перед каждым тестом:
-                - Инициализируем клиент API и endpoint для проектов.
-                - Обнуляем ID созданного проекта.
         """
         self.api_client = api_client
         self.projects = ProjectsEndpoint(api_client)
@@ -89,13 +84,12 @@ class TestCreationUI:
     @allure.title("Создание проекта через UI")
     @allure.description("Проверка полного цикла создания проекта")
     @pytest.mark.ui
-    def test_create_project(self, authorized_driver) -> None:
+    def test_create_project(self, authorized_driver):
         """Создать проект через UI и проверить, что он отображается в списке."""
         project = ProjectPage(authorized_driver)
 
         with allure.step("1. Создание проекта"):
             created_name = project.create_project("Test_Project_UI")
-            # Получаем ID именно созданного проекта по его имени
             self.created_project_id = project.get_project_id_from_dom(created_name)
 
         with allure.step("2. Проверка наличия проекта"):
@@ -107,7 +101,7 @@ class TestCreationUI:
     @allure.title("Создание доски через UI")
     @allure.description("Проверка создания доски в проекте")
     @pytest.mark.ui
-    def test_create_board(self, authorized_driver) -> None:
+    def test_create_board(self, authorized_driver):
         """Создать доску через UI и проверить её наличие."""
 
         with allure.step("1. Создание проекта через API"):
@@ -115,14 +109,17 @@ class TestCreationUI:
             project_resp = self.projects.create(project_name)
             self.created_project_id = project_resp["id"]
 
-        with allure.step("2. Переход в проект через UI"):
+        with allure.step("2. Обновить страницу, чтобы проект появился в списке"):
+            authorized_driver.refresh()
+
+        with allure.step("3. Переход в проект через UI"):
             project = ProjectPage(authorized_driver)
             project.select_project(project_name)
 
         board = BoardPage(authorized_driver)
-        with allure.step("3. Создание доски"):
+        with allure.step("4. Создание доски"):
             board.create_board("TestBoard")
-        with allure.step("4. Проверка наличия доски"):
+        with allure.step("5. Проверка наличия доски"):
             assert board.is_board_present("TestBoard")
 
     @allure.id("UI-05")
@@ -131,7 +128,7 @@ class TestCreationUI:
     @allure.title("Создание колонки через UI")
     @allure.description("Проверка создания колонки на доске")
     @pytest.mark.ui
-    def test_create_column(self, authorized_driver) -> None:
+    def test_create_column(self, authorized_driver):
         """Создать колонку через UI и убедиться, что она отображается."""
         with allure.step("1. Создание проекта и доски через API"):
             project_name = f"{random.randint(1000,9999)}_Проект_для_колонки"
@@ -160,7 +157,7 @@ class TestCreationUI:
     @allure.title("Создание задачи через UI")
     @allure.description("Проверка создания задачи в колонке")
     @pytest.mark.ui
-    def test_create_task(self, authorized_driver) -> None:
+    def test_create_task(self, authorized_driver):
         """Создать задачу через UI и проверить её отображение."""
         with allure.step("1. Создание проекта, доски, колонки через API"):
             project_name = f"{random.randint(1000,9999)}_Проект_для_задачи"

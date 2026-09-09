@@ -16,6 +16,7 @@ from config import Config       # Класс с настройками (логи
 from src.api.client import YouGileApiClient     # Клиент для API-тестов
 from src.ui.locators import locators
 from src.ui.pages.login_page import LoginPage
+from src.ui.pages.project_page import ProjectPage
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -66,6 +67,10 @@ def authorized_driver(driver):
         login_page.login(Config.LOGIN, Config.PASSWORD)
     with allure.step("Дождаться появления заголовка 'Моя компания'"):
         assert login_page.is_mainpage()
+    driver.get(Config.BASE_URL + "/team/")
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located(locators['панель_проектов_компании'])
+    )
     return driver   # Теперь мы на /team/ с открытым разделом "Моя компания"
 
 
@@ -78,15 +83,11 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
     # Заглушка убирает сообщение о неиспользовании call, так как call обязателен в функции.
-    if call.excinfo is not None:
-        pass
     if report.when == "call" and report.failed:
-        # Проверяем, есть ли у тестов фикстура driver
         driver = None
         if "driver" in item.funcargs: driver = item.funcargs["driver"]
         elif "authorized_driver" in item.funcargs: driver = item.funcargs["authorized_driver"]
-
-        if driver is not None:
+        if driver:
             # Имя теста без квадратных скобок
             test_name = item.name.replace("[", "_").replace("]", "_")
             # Текущее время в формате ДД-ММ-ГГГГ_ЧЧ.ММ.СС
@@ -113,11 +114,18 @@ def pytest_sessionfinish(session, exitstatus):
         login_page = LoginPage(cleanup_driver)
         login_page.open()
         login_page.login(Config.LOGIN, Config.PASSWORD)
+        # Перейти на страницу проектов компании
+        cleanup_driver.get(Config.BASE_URL + "/team/")
+        WebDriverWait(cleanup_driver, 10).until(
+            EC.presence_of_element_located(locators['панель_проектов_компании'])
+        )
         project_page = ProjectPage(cleanup_driver)
-        try:
-            project_page.open_archive()
-        except Exception:
-            pass
+        for pid in ALL_CREATED_PROJECT_IDS:
+            try:
+                project_page.delete_project_by_id(pid)
+                print(f"✅ Проект {pid} удалён")
+            except Exception as e:
+                # Если карточка не найдена (проект уже удалён мягко), просто пропускаем
+                print(f"⚠️ Проект {pid} не найден или уже удалён: {e}")
         # Удаляем по конкретным ID
-        project_page.delete_archived_projects_by_ids(ALL_CREATED_PROJECT_IDS)
         cleanup_driver.quit()

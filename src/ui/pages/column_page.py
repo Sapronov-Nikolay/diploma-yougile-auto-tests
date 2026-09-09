@@ -12,6 +12,7 @@
 
 import allure
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
 from src.ui.base_page import BasePage
 from src.ui.locators import locators
 
@@ -29,8 +30,9 @@ class ColumnPage(BasePage):
             self.click('кнопка_создать_колонку')
 
         with allure.step("2. Ввести название колонки"):
-            self.send_keys('поле_название_колонки', name)
-            field = self.find_element('поле_название_колонки')
+            field = self.wait.until(EC.visibility_of_element_located(locators['поле_название_колонки']))
+            field.clear()
+            field.send_keys(name)
             field.send_keys(Keys.ENTER)
 
         with allure.step('3. Дождаться появления заголовка'):
