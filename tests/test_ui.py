@@ -17,7 +17,6 @@ from src.ui.pages.project_page import ProjectPage
 from src.ui.pages.board_page import BoardPage
 from src.ui.pages.column_page import ColumnPage
 from src.ui.pages.task_page import TaskPage
-from src.ui.locators import locators
 from src.api.client import YouGileApiClient
 from src.api.endpoints.projects import ProjectsEndpoint
 
@@ -109,10 +108,7 @@ class TestCreationUI:
             project_resp = self.projects.create(project_name)
             self.created_project_id = project_resp["id"]
 
-        with allure.step("2. Обновить страницу, чтобы проект появился в списке"):
-            authorized_driver.refresh()
-
-        with allure.step("3. Переход в проект через UI"):
+        with allure.step("2. Переход в проект через UI (клик по карточке)"):
             project = ProjectPage(authorized_driver)
             project.select_project(project_name)
 

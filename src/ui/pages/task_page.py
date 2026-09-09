@@ -13,6 +13,7 @@
 
 import allure
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
 from src.ui.base_page import BasePage
 from src.ui.locators import locators
 
@@ -31,11 +32,12 @@ class TaskPage(BasePage):
             self.click('кнопка_добавить_задачу')
 
         with allure.step("2. Ввести название задачи"):
-            self.send_keys('поле_название_задачи', name)
-            field = self.find_element('поле_название_задачи')
+            field = self.wait.until(EC.visibility_of_element_located(locators['поле_название_задачи']))
+            field.clear()
+            field.send_keys(name)
             field.send_keys(Keys.ENTER)
 
-        with allure.step("2. Дождаться появления заголовка задачи"):
+        with allure.step("3. Дождаться появления заголовка задачи"):
             self.wait.until(lambda d: any(
                 name == title.text for title in d.find_elements(*locators['заголовок_задачи'])
             ))

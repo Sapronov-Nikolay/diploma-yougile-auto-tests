@@ -10,6 +10,7 @@
 
 from typing import Optional, List
 import random, allure
+from config import Config
 from src.ui.base_page import BasePage
 from src.ui.locators import locators
 from selenium.webdriver.common.by import By
@@ -36,33 +37,29 @@ class ProjectPage(BasePage):
             name_field.clear()
             name_field.send_keys(name)
 
-        # Если возникла ошибка дубликата ID — меняем имя так, чтобы изменились первые символы (ID‑префикс)
         if self.is_visible('ошибка_дубликата_id'):
             with allure.step("ID занят, генерируем уникальное имя"):
-                # Вставляем случайное число в начало названия, чтобы ID стал другим
                 unique_name = f"{random.randint(1000, 9999)}_{name}"
                 name_field.clear()
                 name_field.send_keys(unique_name)
-                # Ждём, пока ошибка исчезнет (система примет новый ID)
                 self.wait.until(lambda d: not self.is_visible('ошибка_дубликата_id'))
                 name = unique_name
 
         with allure.step("4. Дождаться активации кнопки и кликнуть"):
-            # Явное ожидание кликабельности защищает от ошибок, когда кнопка ещё не готова
             self.wait.until(lambda d: self.is_clickable('кнопка_добавить_проект_с_задачами'))
             self.click('кнопка_добавить_проект_с_задачами')
 
-        with allure.step("5. Дождаться появления проекта в шапке"):
-            self.wait.until(lambda d: name in d.find_element(*locators['название_проекта_в_шапке']).text)
+        with allure.step("5. Дождаться появления кнопки добавления доски"):
+            self.wait.until(EC.presence_of_element_located(locators['кнопка_плюс_создать_доску']))
         return name
 
     @allure.step("Открыть проект по ID: {project_id}")
     def open_by_id(self, project_id: str) -> None:
-        """Перейти на страницу проекта напрямую по его ID."""
-        from config import Config
         self.driver.get(f"{Config.BASE_URL}/team/projects/{project_id}")
-        # Дожидаемся появления шапки проекта
-        self.wait.until(lambda d: d.find_elements(*locators['название_проекта_в_шапке']))
+        # Ждём, пока загрузится страница проекта – по кнопке создания доски
+        self.wait.until(
+            EC.presence_of_element_located(locators['кнопка_плюс_создать_доску'])
+        )
 
     """
         Проверить, отображается ли проект с указанным названием в списке проектов (с ожиданием).
@@ -81,28 +78,27 @@ class ProjectPage(BasePage):
     """
     @allure.step("Выбрать проект {name} (клик по карточке)")
     def select_project(self, name: str) -> None:
-        # Ждём появления хотя бы одного проекта в списке
-        self.wait.until(lambda d: len(d.find_elements(*locators['проект_в_списке_с_id'])) > 0)
-        # Ищем проект по тексту и кликаем по родительскому элементу
-        project_item = None
-        for item in self.driver.find_elements(*locators['проект_в_списке_с_id']):
-            title_elem = item.find_element(*locators['проект_в_списке'])
+        # Ждём появления карточек проектов
+        self.wait.until(EC.presence_of_element_located(locators['проект_карточка']))
+        # Ищем карточку по названию и кликаем
+        for card in self.driver.find_elements(*locators['проект_карточка']):
+            title_elem = card.find_element(*locators['проект_карточка_название'])
             if name in title_elem.text:
-                project_item = item
-                break
-        if project_item is None:
-            raise AssertionError(f"Проект '{name}' не найден в списке")
-        project_item.click()
-        # Ждём загрузки страницы проекта
-        self.wait.until(lambda d: d.find_elements(*locators['кнопка_плюс_создать_доску']))
+                card.click()
+                # Ждём загрузки проекта – по кнопке добавления доски
+                self.wait.until(EC.presence_of_element_located(locators['кнопка_плюс_создать_доску']))
+                return
+        raise AssertionError(f"Проект '{name}' не найден")
 
     """
         Извлечь ID проекта напрямую из атрибута data-itemid элемента в DOM.
     """
     @allure.step("Получить ID проекта из DOM по имени {name}")
     def get_project_id_from_dom(self, name: str) -> Optional[str]:
-        for project in self.driver.find_elements(*locators['проект_в_списке_с_id']):
-            if project.text.strip() == name:
+        projects = self.driver.find_elements(*locators['проект_карточка'])
+        for project in projects:
+            title_elem = project.find_element(*locators['проект_карточка_название'])
+            if title_elem.text.strip() == name:
                 return project.get_attribute("data-itemid")
         return None
 

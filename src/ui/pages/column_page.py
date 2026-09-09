@@ -35,7 +35,7 @@ class ColumnPage(BasePage):
             field.send_keys(name)
             field.send_keys(Keys.ENTER)
 
-        with allure.step('3. Дождаться появления заголовка'):
+        with allure.step("3. Дождаться появления заголовка колонки"):
             self.wait.until(lambda d: any(
                 name == header.text for header in d.find_elements(*locators['заголовок_колонки'])
             ))

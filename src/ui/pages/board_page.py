@@ -20,7 +20,6 @@ class BoardPage(BasePage):
             self.click('пункт_меню_доска_с_задачами')
 
         with allure.step("3. Ввести название доски"):
-            # Ожидаем появления поля ввода
             field = self.wait.until(EC.visibility_of_element_located(locators['поле_название_доски']))
             field.clear()
             field.send_keys(name)
