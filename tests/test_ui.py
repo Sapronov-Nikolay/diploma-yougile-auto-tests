@@ -84,15 +84,10 @@ class TestCreationUI:
     @allure.description("Проверка полного цикла создания проекта")
     @pytest.mark.ui
     def test_create_project(self, authorized_driver):
-        """Создать проект через UI и проверить, что он отображается в списке."""
         project = ProjectPage(authorized_driver)
-
-        with allure.step("1. Создание проекта"):
-            created_name = project.create_project("Test_Project_UI")
-            self.created_project_id = project.get_project_id_from_dom(created_name)
-
-        with allure.step("2. Проверка наличия проекта"):
-            assert project.is_project_present(created_name)
+        with allure.step("1. Создать проект через UI"):
+            name = f"{random.randint(1000,9999)}_Test_Project_UI"
+            project.create_project(name)
 
     @allure.id("UI-04")
     @allure.story("Создание объектов")
@@ -101,22 +96,16 @@ class TestCreationUI:
     @allure.description("Проверка создания доски в проекте")
     @pytest.mark.ui
     def test_create_board(self, authorized_driver):
-        """Создать доску через UI и проверить её наличие."""
-
-        with allure.step("1. Создание проекта через API"):
-            project_name = f"{random.randint(1000,9999)}_Проект_для_доски"
-            project_resp = self.projects.create(project_name)
-            self.created_project_id = project_resp["id"]
-
-        with allure.step("2. Переход в проект через UI (клик по карточке)"):
+        with allure.step("1. Открыть любой существующий проект"):
             project = ProjectPage(authorized_driver)
-            project.select_project(project_name)
+            project.open_any_project()
 
         board = BoardPage(authorized_driver)
-        with allure.step("4. Создание доски"):
-            board.create_board("TestBoard")
-        with allure.step("5. Проверка наличия доски"):
-            assert board.is_board_present("TestBoard")
+        with allure.step("2. Создать доску"):
+            name = f"Board_{random.randint(100,999)}"
+            board.create_board(name)
+        with allure.step("3. Проверить наличие доски"):
+            assert board.is_board_present(name)
 
     @allure.id("UI-05")
     @allure.story("Создание объектов")
@@ -125,27 +114,21 @@ class TestCreationUI:
     @allure.description("Проверка создания колонки на доске")
     @pytest.mark.ui
     def test_create_column(self, authorized_driver):
-        """Создать колонку через UI и убедиться, что она отображается."""
-        with allure.step("1. Создание проекта и доски через API"):
-            project_name = f"{random.randint(1000,9999)}_Проект_для_колонки"
-            project_resp = self.projects.create(project_name)
-            self.created_project_id = project_resp["id"]
-            board_resp = self.api_client.post("/api-v2/boards", {
-                "title": "Доска для колонки",
-                "projectId": self.created_project_id
-            }).json()
-
-        with allure.step("2. Переход в проект и открытие доски через UI"):
+        with allure.step("1. Открыть любой существующий проект"):
             project = ProjectPage(authorized_driver)
-            project.select_project(project_name)
-            board = BoardPage(authorized_driver)
-            board.open_board("Доска для колонки")
+            project.open_any_project()
 
-        column = ColumnPage(authorized_driver)
-        with allure.step("3. Создание колонки"):
-            column.create_column("Новые задачи")
-        with allure.step("4. Проверка наличия колонки"):
-            assert column.is_column_present("Новые задачи")
+        with allure.step("2. Создать доску"):
+            board = BoardPage(authorized_driver)
+            board_name = f"Board_{random.randint(100,999)}"
+            board.create_board(board_name)
+
+        with allure.step("3. Создать колонку"):
+            column = ColumnPage(authorized_driver)
+            column_name = f"Column_{random.randint(100,999)}"
+            column.create_column(column_name)
+        with allure.step("4. Проверить наличие колонки"):
+            assert column.is_column_present(column_name)
 
     @allure.id("UI-06")
     @allure.story("Создание объектов")
@@ -154,28 +137,23 @@ class TestCreationUI:
     @allure.description("Проверка создания задачи в колонке")
     @pytest.mark.ui
     def test_create_task(self, authorized_driver):
-        """Создать задачу через UI и проверить её отображение."""
-        with allure.step("1. Создание проекта, доски, колонки через API"):
-            project_name = f"{random.randint(1000,9999)}_Проект_для_задачи"
-            project_resp = self.projects.create(project_name)
-            self.created_project_id = project_resp["id"]
-            board_resp = self.api_client.post("/api-v2/boards", {
-                "title": "Доска для задачи",
-                "projectId": self.created_project_id
-            }).json()
-            self.api_client.post("/api-v2/columns", {
-                "title": "Колонка для задачи",
-                "boardId": board_resp["id"]
-            }).json()
-
-        with allure.step("2. Переход в проект и открытие доски через UI"):
+        with allure.step("1. Открыть любой существующий проект"):
             project = ProjectPage(authorized_driver)
-            project.select_project(project_name)
-            board = BoardPage(authorized_driver)
-            board.open_board("Доска для задачи")
+            project.open_any_project()
 
-        task = TaskPage(authorized_driver)
-        with allure.step("3. Создание задачи"):
-            task.create_task("Тестовая задача")
-        with allure.step("4. Проверка наличия задачи"):
-            assert task.is_task_present("Тестовая задача")
+        with allure.step("2. Создать доску"):
+            board = BoardPage(authorized_driver)
+            board_name = f"Board_{random.randint(100,999)}"
+            board.create_board(board_name)
+
+        with allure.step("3. Создать колонку"):
+            column = ColumnPage(authorized_driver)
+            column_name = f"Column_{random.randint(100,999)}"
+            column.create_column(column_name)
+
+        with allure.step("4. Создать задачу"):
+            task = TaskPage(authorized_driver)
+            task_name = f"Task_{random.randint(100,999)}"
+            task.create_task(task_name)
+        with allure.step("5. Проверить наличие задачи"):
+            assert task.is_task_present(task_name)

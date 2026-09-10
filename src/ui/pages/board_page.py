@@ -19,18 +19,16 @@ class BoardPage(BasePage):
         with allure.step("2. Выбрать «Доска с задачами»"):
             self.click('пункт_меню_доска_с_задачами')
 
-        with allure.step("3. Ввести название доски"):
-            field = self.wait.until(EC.visibility_of_element_located(locators['поле_название_доски']))
-            field.clear()
-            field.send_keys(name)
-            field.send_keys(Keys.ENTER)
+        with allure.step("3. Ввести название (фокус уже в поле)"):
+            active = self.driver.switch_to.active_element
+            active.send_keys(name)
+            active.send_keys(Keys.ENTER)
 
         with allure.step("4. Дождаться появления вкладки доски"):
             self.wait.until(
                 lambda d: any(
-                    name in tab.get_attribute("title")
+                    name in (tab.get_attribute("title") or "")
                     for tab in d.find_elements(*locators['вкладка_доски'])
-                    if tab.get_attribute("title")
                 )
             )
 
@@ -46,4 +44,4 @@ class BoardPage(BasePage):
     @allure.step("Проверить, что доска с названием '{name}' отображается")
     def is_board_present(self, name: str) -> bool:
         tabs = self.driver.find_elements(*locators['вкладка_доски'])
-        return any(name in tab.get_attribute("title") for tab in tabs if tab.get_attribute("title"))
+        return any(name in (tab.get_attribute("title") or "") for tab in tabs)

@@ -31,11 +31,10 @@ class TaskPage(BasePage):
         with allure.step("1. Нажать «Добавить задачу»"):
             self.click('кнопка_добавить_задачу')
 
-        with allure.step("2. Ввести название задачи"):
-            field = self.wait.until(EC.visibility_of_element_located(locators['поле_название_задачи']))
-            field.clear()
-            field.send_keys(name)
-            field.send_keys(Keys.ENTER)
+        with allure.step("2. Ввести название (фокус уже в поле)"):
+            active = self.driver.switch_to.active_element
+            active.send_keys(name)
+            active.send_keys(Keys.ENTER)
 
         with allure.step("3. Дождаться появления заголовка задачи"):
             self.wait.until(lambda d: any(

@@ -27,7 +27,7 @@ class ProjectPage(BasePage):
     @allure.step("Создать проект через UI: название = {name}")
     def create_project(self, name: str) -> str:
         with allure.step("1. Открыть модальное окно проекта"):
-            self.click('кнопка_добавить_проект_в_меню')
+            self.click('карточка_добавить_проект')
 
         with allure.step("2. Выбрать тип «Проект с задачами»"):
             self.click('пункт_меню_проект_с_задачами')
@@ -52,6 +52,16 @@ class ProjectPage(BasePage):
         with allure.step("5. Дождаться появления кнопки добавления доски"):
             self.wait.until(EC.presence_of_element_located(locators['кнопка_плюс_создать_доску']))
         return name
+
+    @allure.step("Открыть любой существующий проект (клик по первой карточке)")
+    def open_any_project(self) -> None:
+        cards = self.driver.find_elements(*locators['проект_карточка'])
+        if not cards:
+            # Карточек нет — создаём проект через большую кнопку
+            self.create_project(f"{random.randint(1000, 9999)}_Auto_Project")
+            return
+        cards[0].click()
+        self.wait.until(EC.presence_of_element_located(locators['кнопка_плюс_создать_доску']))
 
     @allure.step("Открыть проект по ID: {project_id}")
     def open_by_id(self, project_id: str) -> None:

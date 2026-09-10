@@ -29,11 +29,10 @@ class ColumnPage(BasePage):
         with allure.step("1. Нажать «Создать колонку»"):
             self.click('кнопка_создать_колонку')
 
-        with allure.step("2. Ввести название колонки"):
-            field = self.wait.until(EC.visibility_of_element_located(locators['поле_название_колонки']))
-            field.clear()
-            field.send_keys(name)
-            field.send_keys(Keys.ENTER)
+        with allure.step("2. Ввести название (фокус уже в поле)"):
+            active = self.driver.switch_to.active_element
+            active.send_keys(name)
+            active.send_keys(Keys.ENTER)
 
         with allure.step("3. Дождаться появления заголовка колонки"):
             self.wait.until(lambda d: any(

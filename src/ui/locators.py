@@ -1,3 +1,4 @@
+# src/ui/locators.py
 from selenium.webdriver.common.by import By
 
 locators = {
@@ -12,15 +13,15 @@ locators = {
     'заголовок_моя_компания': (By.CSS_SELECTOR, "[data-testid='my-company-header']"),
 
     # Создание проекта
+    'карточка_добавить_проект': (By.CSS_SELECTOR, "[data-testid='add-project-card']"),
     'кнопка_добавить_проект_в_меню': (By.CSS_SELECTOR, "[data-testid='add-project-button']"),
     'пункт_меню_проект_с_задачами': (By.CSS_SELECTOR, "[data-testid='menu-item-add-default-project']"),
     'поле_название_проекта': (By.CSS_SELECTOR, "input[placeholder='Введите название проекта…']"),
     'кнопка_добавить_проект_с_задачами': (By.XPATH, "//div[contains(@class,'bg-action-default') and contains(.,'Добавить проект с задачами')]"),
     'ошибка_дубликата_id': (By.CSS_SELECTOR, ".text-status-error.micro-regular"),
 
-    # Проекты (карточки на главной)
+    # Карточки проектов на /team/
     'проект_карточка': (By.CSS_SELECTOR, "[data-testid='project-card']"),
-    'проект_карточка_название': (By.CSS_SELECTOR, "[data-testid='project-title']"),
 
     # Доски
     'кнопка_плюс_создать_доску': (By.CSS_SELECTOR, "[data-testid='add-new-board']"),

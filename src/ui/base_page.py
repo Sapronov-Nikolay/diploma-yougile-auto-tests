@@ -38,11 +38,9 @@ class BasePage:
         elem.send_keys(text)
 
     @allure.step("Проверить видимость элемента: {locator_key}")
-    def is_visible(self,locator_key):
-        try:
-            return self.find_element(locator_key).is_displayed()
-        except Exception:
-            return False
+    def is_visible(self, locator_key):
+        elements = self.driver.find_elements(*locators[locator_key])
+        return len(elements) > 0 and elements[0].is_displayed()
 
     @allure.step("Проверить кликабельность элемента: {locator_key}")
     def is_clickable(self,locator_key) -> bool:
