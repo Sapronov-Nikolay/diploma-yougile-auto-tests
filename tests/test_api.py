@@ -39,6 +39,11 @@ class TestAuthAPI:
             })
 
         with allure.step("2. Проверить статус-код 200"):
+            if resp.status_code != 200:
+                print("\n=== ОТВЕТ СЕРВЕРА ===")
+                print(f"STATUS: {resp.status_code}")
+                print(f"BODY: {resp.text}")
+                print("=== КОНЕЦ ===\n")
             assert resp.status_code == 200
 
         with allure.step("3. Проверить наличие id в ответе"):

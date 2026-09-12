@@ -21,12 +21,12 @@ class AuthEndpoint:
     """Получение CompanyId по логину и паролю."""
     @allure.step("Получить CompanyId для пользователя {login} и {password}")
     def get_company_id(self, login: str, password: str) -> str:
-        resp = self.client.post("/api-v2/auth/companies",{
-            "login": login,
-            "password": password,
-        })
+        resp = self.client.post(
+            "/api-v2/auth/companies",
+            {"login": login, "password": password},
+            auth=False,   # ← вот
+        )
         resp.raise_for_status()
-
         data = resp.json()
         if not data:
             raise ValueError("API вернул пустой список компаний. Проверьте учётные данные")
@@ -35,12 +35,10 @@ class AuthEndpoint:
     """Создание и получить новый API-ключ для указанного companyId."""
     @allure.step("Создать API-ключ для компании {company_id}")
     def get_api_key(self, login: str, password: str, company_id: str) -> str:
-        resp = self.client.post("/api-v2/auth/keys", {
-            "login": login,
-            "password": password,
-            "companyId": company_id,
-        })
+        resp = self.client.post(
+            "/api-v2/auth/keys",
+            {"login": login, "password": password, "companyId": company_id},
+            auth=False,   # ← вот
+        )
         resp.raise_for_status()
-
-        # Ответ API обычно выглядит так: {"key": "abc123..."}
         return resp.json()["key"]

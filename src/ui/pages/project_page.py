@@ -9,7 +9,9 @@
 """
 
 from typing import Optional
-import random, allure
+import random, allure, re
+
+from selenium.webdriver.support.wait import WebDriverWait
 from config import Config
 from src.ui.base_page import BasePage
 from src.ui.locators import locators
@@ -138,3 +140,81 @@ class ProjectPage(BasePage):
             confirm_btn.click()
         with allure.step("5. Ждём исчезновения карточки"):
             self.wait.until(EC.staleness_of(card))
+
+    # ---------- Уборка тестовых проектов (для UI-07) ----------
+
+    @allure.step("Собрать имена тестовых проектов на странице /team/")
+    def collect_test_project_names(self) -> list:
+        self.driver.get(Config.BASE_URL + "/team/")
+        self.wait.until(
+            EC.presence_of_element_located(locators['панель_проектов_компании'])
+        )
+
+        # Ждём ИМЕННО карточек (а не кнопки "Добавить проект", она есть всегда)
+        # Если карточек вообще нет — считаем, что список пуст
+        try:
+            WebDriverWait(self.driver, 10).until(
+                lambda d: d.find_elements(*locators['проект_карточка'])
+            )
+        except Exception:
+            return []
+
+        # Стабилизация: два одинаковых счёта подряд = все карточки отрисованы
+        prev = -1
+        for _ in range(10):
+            cards = self.driver.find_elements(*locators['проект_карточка'])
+            if len(cards) == prev:
+                break
+            prev = len(cards)
+            WebDriverWait(self.driver, 0.5).until(
+                lambda d: len(d.find_elements(*locators['проект_карточка'])) == prev
+                          or True  # всегда true, просто даём полсекунды
+            )
+
+        pattern = re.compile(r"^\d{4}_(Test_Project_UI|Auto_Project)$")
+        names = []
+        for card in self.driver.find_elements(*locators['проект_карточка']):
+            try:
+                title = card.find_element(*locators['проект_карточка_название']).text.strip()
+            except Exception:
+                continue
+            if pattern.match(title):
+                names.append(title)
+        return names
+
+    @allure.step("Удалить проект через UI: {name}")
+    def delete_project_by_name(self, name: str) -> None:
+        target = name.strip()
+
+        with allure.step("1. Найти карточку проекта"):
+            def _find(d):
+                for c in d.find_elements(*locators['проект_карточка']):
+                    try:
+                        title = c.find_element(*locators['проект_карточка_название']).text.strip()
+                    except Exception:
+                        continue
+                    if title == target:
+                        return c
+                return False
+            card = self.wait.until(_find)
+
+        with allure.step("2. Открыть меню карточки (три точки)"):
+            card.find_element(*locators['проект_карточка_меню']).click()
+
+        with allure.step("3. Кликнуть «Удалить» в меню"):
+            self.click('пункт_меню_удалить_проект')
+
+        with allure.step("4. Подтвердить удаление"):
+            self.click('кнопка_подтвердить_удаление_проекта')
+
+        with allure.step("5. Дождаться исчезновения карточки"):
+            def _gone(d):
+                for c in d.find_elements(*locators['проект_карточка']):
+                    try:
+                        title = c.find_element(*locators['проект_карточка_название']).text.strip()
+                    except Exception:
+                        continue
+                    if title == target:
+                        return False
+                return True
+            self.wait.until(_gone)

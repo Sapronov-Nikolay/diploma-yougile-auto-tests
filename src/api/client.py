@@ -59,16 +59,23 @@ class YouGileApiClient:
         return self._token
 
     """Формирует заголовки для фвторизованного запроса."""
-    def _headers(self):
-        return {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self._ensure_auth()}"
-        }
+    def _headers(self, auth: bool = True):
+        headers = {"Content-Type": "application/json"}
+        if auth:
+            headers["Authorization"] = f"Bearer {self._ensure_auth()}"
+        return headers
 
     """Выполнить POST-запрос к API."""
     @allure.step("API. Выполнить POST запрос на {endpoint}")
-    def post(self, endpoint, payload):
-        return requests.post(f"{self.base_url}{endpoint}", json=payload, headers=self._headers())
+    def post(self, endpoint, payload, auth: bool = None):
+        # Авторизация не нужна для эндпоинтов входа
+        if auth is None:
+            auth = not endpoint.startswith("/api-v2/auth/")
+        return requests.post(
+            f"{self.base_url}{endpoint}",
+            json=payload,
+            headers=self._headers(auth),
+        )
 
     """Выполнить GET-запрос."""
     @allure.step("API. Выполнить GET запрос на {endpoint}")

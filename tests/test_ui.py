@@ -157,3 +157,44 @@ class TestCreationUI:
             task.create_task(task_name)
         with allure.step("5. Проверить наличие задачи"):
             assert task.is_task_present(task_name)
+
+    @allure.id("UI-07")
+    @allure.story("Удаление объектов")
+    @allure.feature("Уборка тестовых данных")
+    @allure.title("Удаление всех тестовых проектов через UI")
+    @allure.description(
+        "Финальная уборка после автотестов. Удаляются только проекты с маской "
+        "'NNNN_Test_Project_UI' и 'NNNN_Auto_Project'. Чужие проекты не трогаются."
+    )
+    @pytest.mark.ui
+    def test_cleanup_test_projects(self, authorized_driver):
+        project = ProjectPage(authorized_driver)
+
+        with allure.step("1. Собрать список тестовых проектов"):
+            test_names = project.collect_test_project_names()
+
+        with allure.step(f"2. Найдено: {len(test_names)}"):
+            allure.attach(
+                "\n".join(test_names) if test_names else "— пусто —",
+                name="Найденные тестовые проекты",
+                attachment_type=allure.attachment_type.TEXT,
+            )
+
+        for name in test_names:
+            with allure.step(f"3. Удалить '{name}'"):
+                try:
+                    project.delete_project_by_name(name)
+                except Exception as e:
+                    allure.attach(
+                        str(e),
+                        name=f"Не удалось удалить '{name}'",
+                        attachment_type=allure.attachment_type.TEXT,
+                    )
+
+        with allure.step("4. Итог: сколько тестовых осталось"):
+            remaining = project.collect_test_project_names()
+            allure.attach(
+                "\n".join(remaining) if remaining else "— всё удалено —",
+                name="Остались тестовые проекты",
+                attachment_type=allure.attachment_type.TEXT,
+            )

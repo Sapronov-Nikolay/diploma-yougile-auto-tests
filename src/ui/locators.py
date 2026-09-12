@@ -11,6 +11,7 @@ locators = {
 
     # Заголовок после входа
     'заголовок_моя_компания': (By.CSS_SELECTOR, "[data-testid='my-company-header']"),
+    'панель_проектов_компании': (By.CSS_SELECTOR, "[data-testid='panel-company-projects']"),
 
     # Создание проекта
     'карточка_добавить_проект': (By.CSS_SELECTOR, "[data-testid='add-project-card']"),
@@ -22,6 +23,8 @@ locators = {
 
     # Карточки проектов на /team/
     'проект_карточка': (By.CSS_SELECTOR, "[data-testid='project-card']"),
+    'проект_карточка_название': (By.CSS_SELECTOR, "[data-testid='project-title']"),
+    'проект_карточка_меню': (By.CSS_SELECTOR, "[data-testid='project-card-menu-button']"),
 
     # Доски
     'кнопка_плюс_создать_доску': (By.CSS_SELECTOR, "[data-testid='add-new-board']"),
@@ -38,4 +41,16 @@ locators = {
     'кнопка_добавить_задачу': (By.XPATH, "//span[text()='Добавить задачу']"),
     'поле_название_задачи': (By.CSS_SELECTOR, "textarea[data-testid='board-task-input-name']"),
     'заголовок_задачи': (By.CSS_SELECTOR, "[data-testid='board-task-title'] span span"),
+
+    # Удаление проекта
+    'пункт_меню_удалить_проект': (By.CSS_SELECTOR, "[data-testid='menu-item-remove']"),
+    'кнопка_подтвердить_удаление_проекта': (
+        By.XPATH,
+        "//div[@role='button' and contains(@class,'bg-action-attention-default') "
+        "and .//div[text()='Удалить']]"
+    ),
+    'заголовок_модалки_удаления_проекта': (
+        By.XPATH,
+        "//div[contains(@class,'h1-semibold') and normalize-space(text())='Удалить проект?']"
+    ),
 }
