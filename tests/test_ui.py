@@ -19,6 +19,7 @@ from src.ui.pages.column_page import ColumnPage
 from src.ui.pages.task_page import TaskPage
 from src.api.client import YouGileApiClient
 from src.api.endpoints.projects import ProjectsEndpoint
+from src.ui.locators import locators as ui_locators
 
 @allure.epic("UI")
 @allure.severity(allure.severity_level.CRITICAL)
@@ -161,10 +162,11 @@ class TestCreationUI:
     @allure.id("UI-07")
     @allure.story("Удаление объектов")
     @allure.feature("Уборка тестовых данных")
-    @allure.title("Удаление всех тестовых проектов через UI")
+    @allure.title("Удаление тестовых проектов через UI")
     @allure.description(
-        "Финальная уборка после автотестов. Удаляются только проекты с маской "
-        "'NNNN_Test_Project_UI' и 'NNNN_Auto_Project'. Чужие проекты не трогаются."
+        "Уборка проектов с маской 'NNNN_Test_Project_UI' и 'NNNN_Auto_Project'. "
+        "Если в компании остаётся только один проект — YouGile не даёт его удалить, "
+        "это ограничение платформы, тест не падает."
     )
     @pytest.mark.ui
     def test_cleanup_test_projects(self, authorized_driver):
@@ -172,26 +174,23 @@ class TestCreationUI:
 
         with allure.step("1. Собрать список тестовых проектов"):
             test_names = project.collect_test_project_names()
-
-        with allure.step(f"2. Найдено: {len(test_names)}"):
             allure.attach(
                 "\n".join(test_names) if test_names else "— пусто —",
                 name="Найденные тестовые проекты",
                 attachment_type=allure.attachment_type.TEXT,
             )
 
-        for name in test_names:
-            with allure.step(f"3. Удалить '{name}'"):
-                try:
+        with allure.step("2. Удалить каждый проект по очереди"):
+            for name in test_names:
+                with allure.step(f"Удалить '{name}'"):
                     project.delete_project_by_name(name)
-                except Exception as e:
                     allure.attach(
-                        str(e),
-                        name=f"Не удалось удалить '{name}'",
+                        f"Удалён: {name}",
+                        name=f"Результат: {name}",
                         attachment_type=allure.attachment_type.TEXT,
                     )
 
-        with allure.step("4. Итог: сколько тестовых осталось"):
+        with allure.step("3. Финальная проверка"):
             remaining = project.collect_test_project_names()
             allure.attach(
                 "\n".join(remaining) if remaining else "— всё удалено —",

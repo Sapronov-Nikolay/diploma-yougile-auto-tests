@@ -45,9 +45,9 @@ locators = {
     # Удаление проекта
     'пункт_меню_удалить_проект': (By.CSS_SELECTOR, "[data-testid='menu-item-remove']"),
     'кнопка_подтвердить_удаление_проекта': (
-        By.XPATH,
-        "//div[@role='button' and contains(@class,'bg-action-attention-default') "
-        "and .//div[text()='Удалить']]"
+    By.XPATH,
+        "//div[.//div[contains(@class,'h1-semibold') and normalize-space(text())='Удалить проект?']]"
+        "//div[@role='button'][.//div[normalize-space(text())='Удалить']]"
     ),
     'заголовок_модалки_удаления_проекта': (
         By.XPATH,

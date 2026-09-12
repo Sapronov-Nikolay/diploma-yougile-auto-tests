@@ -145,31 +145,17 @@ class ProjectPage(BasePage):
 
     @allure.step("Собрать имена тестовых проектов на странице /team/")
     def collect_test_project_names(self) -> list:
-        self.driver.get(Config.BASE_URL + "/team/")
+        # Без driver.get — работаем на текущей странице.
+        # Ждём панели и карточек, которые уже есть в DOM.
         self.wait.until(
             EC.presence_of_element_located(locators['панель_проектов_компании'])
         )
-
-        # Ждём ИМЕННО карточек (а не кнопки "Добавить проект", она есть всегда)
-        # Если карточек вообще нет — считаем, что список пуст
         try:
-            WebDriverWait(self.driver, 10).until(
+            self.wait.until(
                 lambda d: d.find_elements(*locators['проект_карточка'])
             )
         except Exception:
             return []
-
-        # Стабилизация: два одинаковых счёта подряд = все карточки отрисованы
-        prev = -1
-        for _ in range(10):
-            cards = self.driver.find_elements(*locators['проект_карточка'])
-            if len(cards) == prev:
-                break
-            prev = len(cards)
-            WebDriverWait(self.driver, 0.5).until(
-                lambda d: len(d.find_elements(*locators['проект_карточка'])) == prev
-                          or True  # всегда true, просто даём полсекунды
-            )
 
         pattern = re.compile(r"^\d{4}_(Test_Project_UI|Auto_Project)$")
         names = []
@@ -198,16 +184,26 @@ class ProjectPage(BasePage):
                 return False
             card = self.wait.until(_find)
 
-        with allure.step("2. Открыть меню карточки (три точки)"):
+        with allure.step("2. Открыть меню (три точки)"):
             card.find_element(*locators['проект_карточка_меню']).click()
 
         with allure.step("3. Кликнуть «Удалить» в меню"):
             self.click('пункт_меню_удалить_проект')
 
-        with allure.step("4. Подтвердить удаление"):
+        with allure.step("4. Дождаться модалки «Удалить проект?»"):
+            self.wait.until(
+                EC.visibility_of_element_located(locators['заголовок_модалки_удаления_проекта'])
+            )
+
+        with allure.step("5. Кликнуть «Удалить» в модалке"):
             self.click('кнопка_подтвердить_удаление_проекта')
 
-        with allure.step("5. Дождаться исчезновения карточки"):
+        with allure.step("6. Дождаться закрытия модалки"):
+            self.wait.until(
+                EC.invisibility_of_element_located(locators['заголовок_модалки_удаления_проекта'])
+            )
+
+        with allure.step(f"7. Дождаться исчезновения карточки '{target}' из DOM"):
             def _gone(d):
                 for c in d.find_elements(*locators['проект_карточка']):
                     try:
