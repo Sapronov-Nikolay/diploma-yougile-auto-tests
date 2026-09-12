@@ -1,0 +1,187 @@
+.\config.py:4:80: E501 line too long (81 > 79 characters)
+.\config.py:5:80: E501 line too long (104 > 79 characters)
+.\config.py:6:80: E501 line too long (110 > 79 characters)
+.\config.py:8:80: E501 line too long (84 > 79 characters)
+.\config.py:9:80: E501 line too long (82 > 79 characters)
+.\config.py:13:80: E501 line too long (89 > 79 characters)
+.\config.py:16:1: E302 expected 2 blank lines, found 0
+.\config.py:25:5: E303 too many blank lines (3)
+.\config.py:29:80: E501 line too long (81 > 79 characters)
+.\config.py:30:80: E501 line too long (89 > 79 characters)
+.\config.py:31:80: E501 line too long (81 > 79 characters)
+.\config.py:32:80: E501 line too long (108 > 79 characters)
+.\conftest.py:9:80: E501 line too long (105 > 79 characters)
+.\conftest.py:10:80: E501 line too long (91 > 79 characters)
+.\conftest.py:13:14: E401 multiple imports on one line
+.\conftest.py:25:80: E501 line too long (124 > 79 characters)
+.\conftest.py:29:80: E501 line too long (87 > 79 characters)
+.\conftest.py:31:1: E302 expected 2 blank lines, found 0
+.\conftest.py:33:38: E231 missing whitespace after ','
+.\conftest.py:39:1: E302 expected 2 blank lines, found 0
+.\conftest.py:45:80: E501 line too long (80 > 79 characters)
+.\conftest.py:47:1: E302 expected 2 blank lines, found 0
+.\conftest.py:57:80: E501 line too long (91 > 79 characters)
+.\conftest.py:60:1: E302 expected 2 blank lines, found 0
+.\conftest.py:78:80: E501 line too long (81 > 79 characters)
+.\conftest.py:80:1: E302 expected 2 blank lines, found 0
+.\conftest.py:93:80: E501 line too long (89 > 79 characters)
+.\conftest.py:95:80: E501 line too long (110 > 79 characters)
+.\conftest.py:96:1: W391 blank line at end of file
+.\key_manager.py:9:80: E501 line too long (113 > 79 characters)
+.\key_manager.py:11:10: E401 multiple imports on one line
+.\key_manager.py:14:80: E501 line too long (87 > 79 characters)
+.\key_manager.py:20:80: E501 line too long (108 > 79 characters)
+.\key_manager.py:21:80: E501 line too long (89 > 79 characters)
+.\key_manager.py:22:80: E501 line too long (122 > 79 characters)
+.\key_manager.py:24:80: E501 line too long (107 > 79 characters)
+.\key_manager.py:31:1: E302 expected 2 blank lines, found 1
+.\key_manager.py:33:14: E225 missing whitespace around operator
+.\key_manager.py:47:80: E501 line too long (83 > 79 characters)
+.\key_manager.py:76:80: E501 line too long (84 > 79 characters)
+.\key_manager.py:172:1: W293 blank line contains whitespace
+.\key_manager.py:175:1: W293 blank line contains whitespace
+.\src\api\client.py:6:80: E501 line too long (81 > 79 characters)
+.\src\api\client.py:8:80: E501 line too long (80 > 79 characters)
+.\src\api\client.py:12:16: E401 multiple imports on one line
+.\src\api\client.py:16:1: E302 expected 2 blank lines, found 0
+.\src\api\client.py:22:80: E501 line too long (91 > 79 characters)
+.\src\api\client.py:40:80: E501 line too long (102 > 79 characters)
+.\src\api\client.py:48:80: E501 line too long (81 > 79 characters)
+.\src\api\client.py:83:80: E501 line too long (82 > 79 characters)
+.\src\api\client.py:88:80: E501 line too long (96 > 79 characters)
+.\src\api\client.py:93:80: E501 line too long (85 > 79 characters)
+.\src\api\endpoints\auth.py:8:80: E501 line too long (81 > 79 characters)
+.\src\api\endpoints\auth.py:9:80: E501 line too long (82 > 79 characters)
+.\src\api\endpoints\auth.py:16:1: E302 expected 2 blank lines, found 1
+.\src\api\endpoints\auth.py:32:80: E501 line too long (91 > 79 characters)
+.\src\api\endpoints\projects.py:4:80: E501 line too long (85 > 79 characters)
+.\src\api\endpoints\projects.py:5:80: E501 line too long (83 > 79 characters)
+.\src\api\endpoints\projects.py:8:80: E501 line too long (82 > 79 characters)
+.\src\api\endpoints\projects.py:9:80: E501 line too long (81 > 79 characters)
+.\src\api\endpoints\projects.py:12:80: E501 line too long (106 > 79 characters)
+.\src\api\endpoints\projects.py:13:80: E501 line too long (83 > 79 characters)
+.\src\api\endpoints\projects.py:14:80: E501 line too long (128 > 79 characters)
+.\src\api\endpoints\projects.py:16:80: E501 line too long (101 > 79 characters)
+.\src\api\endpoints\projects.py:17:80: E501 line too long (86 > 79 characters)
+.\src\api\endpoints\projects.py:25:1: E302 expected 2 blank lines, found 0
+.\src\api\endpoints\projects.py:31:80: E501 line too long (91 > 79 characters)
+.\src\api\endpoints\projects.py:48:80: E501 line too long (117 > 79 characters)
+.\src\ui\base_page.py:5:80: E501 line too long (85 > 79 characters)
+.\src\ui\base_page.py:13:80: E501 line too long (84 > 79 characters)
+.\src\ui\base_page.py:14:80: E501 line too long (88 > 79 characters)
+.\src\ui\base_page.py:21:1: E302 expected 2 blank lines, found 1
+.\src\ui\base_page.py:28:80: E501 line too long (87 > 79 characters)
+.\src\ui\base_page.py:32:80: E501 line too long (82 > 79 characters)
+.\src\ui\base_page.py:46:26: E231 missing whitespace after ','
+.\src\ui\locators.py:7:80: E501 line too long (81 > 79 characters)
+.\src\ui\locators.py:8:80: E501 line too long (96 > 79 characters)
+.\src\ui\locators.py:9:80: E501 line too long (83 > 79 characters)
+.\src\ui\locators.py:13:80: E501 line too long (85 > 79 characters)
+.\src\ui\locators.py:14:80: E501 line too long (92 > 79 characters)
+.\src\ui\locators.py:17:80: E501 line too long (86 > 79 characters)
+.\src\ui\locators.py:18:80: E501 line too long (93 > 79 characters)
+.\src\ui\locators.py:19:80: E501 line too long (103 > 79 characters)
+.\src\ui\locators.py:20:80: E501 line too long (97 > 79 characters)
+.\src\ui\locators.py:21:80: E501 line too long (144 > 79 characters)
+.\src\ui\locators.py:22:80: E501 line too long (81 > 79 characters)
+.\src\ui\locators.py:26:80: E501 line too long (83 > 79 characters)
+.\src\ui\locators.py:27:80: E501 line too long (90 > 79 characters)
+.\src\ui\locators.py:30:80: E501 line too long (84 > 79 characters)
+.\src\ui\locators.py:31:80: E501 line too long (98 > 79 characters)
+.\src\ui\locators.py:32:80: E501 line too long (85 > 79 characters)
+.\src\ui\locators.py:37:80: E501 line too long (92 > 79 characters)
+.\src\ui\locators.py:42:80: E501 line too long (95 > 79 characters)
+.\src\ui\locators.py:43:80: E501 line too long (88 > 79 characters)
+.\src\ui\locators.py:46:80: E501 line too long (87 > 79 characters)
+.\src\ui\locators.py:48:5: E122 continuation line missing indentation or outdented
+.\src\ui\locators.py:49:80: E501 line too long (101 > 79 characters)
+.\src\ui\locators.py:54:80: E501 line too long (93 > 79 characters)
+.\src\ui\pages\board_page.py:11:1: E302 expected 2 blank lines, found 1
+.\src\ui\pages\column_page.py:8:80: E501 line too long (96 > 79 characters)
+.\src\ui\pages\column_page.py:24:1: E302 expected 2 blank lines, found 0
+.\src\ui\pages\column_page.py:38:80: E501 line too long (97 > 79 characters)
+.\src\ui\pages\login_page.py:6:80: E501 line too long (84 > 79 characters)
+.\src\ui\pages\login_page.py:10:80: E501 line too long (92 > 79 characters)
+.\src\ui\pages\login_page.py:13:14: E401 multiple imports on one line
+.\src\ui\pages\login_page.py:21:1: E302 expected 2 blank lines, found 0
+.\src\ui\pages\login_page.py:35:40: E261 at least two spaces before inline comment
+.\src\ui\pages\login_page.py:45:80: E501 line too long (86 > 79 characters)
+.\src\ui\pages\login_page.py:63:46: W292 no newline at end of file
+.\src\ui\pages\project_page.py:5:80: E501 line too long (89 > 79 characters)
+.\src\ui\pages\project_page.py:6:80: E501 line too long (80 > 79 characters)
+.\src\ui\pages\project_page.py:8:80: E501 line too long (80 > 79 characters)
+.\src\ui\pages\project_page.py:12:14: E401 multiple imports on one line
+.\src\ui\pages\project_page.py:19:1: E302 expected 2 blank lines, found 1
+.\src\ui\pages\project_page.py:24:80: E501 line too long (114 > 79 characters)
+.\src\ui\pages\project_page.py:25:80: E501 line too long (87 > 79 characters)
+.\src\ui\pages\project_page.py:45:80: E501 line too long (85 > 79 characters)
+.\src\ui\pages\project_page.py:49:80: E501 line too long (93 > 79 characters)
+.\src\ui\pages\project_page.py:53:80: E501 line too long (98 > 79 characters)
+.\src\ui\pages\project_page.py:64:80: E501 line too long (94 > 79 characters)
+.\src\ui\pages\project_page.py:71:80: E501 line too long (81 > 79 characters)
+.\src\ui\pages\project_page.py:75:80: E501 line too long (96 > 79 characters)
+.\src\ui\pages\project_page.py:80:80: E501 line too long (119 > 79 characters)
+.\src\ui\pages\project_page.py:82:9: E722 do not use bare 'except'
+.\src\ui\pages\project_page.py:87:80: E501 line too long (80 > 79 characters)
+.\src\ui\pages\project_page.py:92:80: E501 line too long (84 > 79 characters)
+.\src\ui\pages\project_page.py:95:80: E501 line too long (81 > 79 characters)
+.\src\ui\pages\project_page.py:99:80: E501 line too long (102 > 79 characters)
+.\src\ui\pages\project_page.py:110:80: E501 line too long (84 > 79 characters)
+.\src\ui\pages\project_page.py:119:80: E501 line too long (89 > 79 characters)
+.\src\ui\pages\project_page.py:124:80: E501 line too long (87 > 79 characters)
+.\src\ui\pages\project_page.py:126:80: E501 line too long (104 > 79 characters)
+.\src\ui\pages\project_page.py:127:13: E722 do not use bare 'except'
+.\src\ui\pages\project_page.py:128:13: E115 expected an indented block (comment)
+.\src\ui\pages\project_page.py:134:80: E501 line too long (110 > 79 characters)
+.\src\ui\pages\project_page.py:137:80: E501 line too long (118 > 79 characters)
+.\src\ui\pages\project_page.py:149:80: E501 line too long (80 > 79 characters)
+.\src\ui\pages\project_page.py:162:80: E501 line too long (93 > 79 characters)
+.\src\ui\pages\project_page.py:177:80: E501 line too long (98 > 79 characters)
+.\src\ui\pages\project_page.py:193:80: E501 line too long (96 > 79 characters)
+.\src\ui\pages\project_page.py:201:80: E501 line too long (98 > 79 characters)
+.\src\ui\pages\project_page.py:204:80: E501 line too long (82 > 79 characters)
+.\src\ui\pages\project_page.py:208:80: E501 line too long (98 > 79 characters)
+.\src\ui\pages\task_page.py:8:80: E501 line too long (122 > 79 characters)
+.\src\ui\pages\task_page.py:9:80: E501 line too long (97 > 79 characters)
+.\src\ui\pages\task_page.py:10:80: E501 line too long (95 > 79 characters)
+.\src\ui\pages\task_page.py:23:80: E501 line too long (80 > 79 characters)
+.\src\ui\pages\task_page.py:26:1: E302 expected 2 blank lines, found 0
+.\src\ui\pages\task_page.py:36:80: E501 line too long (82 > 79 characters)
+.\src\ui\pages\task_page.py:44:80: E501 line too long (94 > 79 characters)
+.\tests\test_api.py:9:80: E501 line too long (87 > 79 characters)
+.\tests\test_api.py:10:80: E501 line too long (96 > 79 characters)
+.\tests\test_api.py:11:80: E501 line too long (119 > 79 characters)
+.\tests\test_api.py:14:14: E401 multiple imports on one line
+.\tests\test_api.py:23:1: E302 expected 2 blank lines, found 0
+.\tests\test_api.py:61:80: E501 line too long (84 > 79 characters)
+.\tests\test_api.py:72:80: E501 line too long (84 > 79 characters)
+.\tests\test_api.py:78:1: E305 expected 2 blank lines after class or function definition, found 1
+.\tests\test_api.py:79:1: E302 expected 2 blank lines, found 0
+.\tests\test_api.py:85:80: E501 line too long (93 > 79 characters)
+.\tests\test_api.py:107:49: E231 missing whitespace after ','
+.\tests\test_api.py:113:80: E501 line too long (83 > 79 characters)
+.\tests\test_api.py:117:80: E501 line too long (89 > 79 characters)
+.\tests\test_api.py:132:49: E231 missing whitespace after ','
+.\tests\test_api.py:155:49: E231 missing whitespace after ','
+.\tests\test_api.py:161:46: E231 missing whitespace after ','
+.\tests\test_api.py:162:80: E501 line too long (82 > 79 characters)
+.\tests\test_api.py:181:49: E231 missing whitespace after ','
+.\tests\test_api.py:188:80: E501 line too long (85 > 79 characters)
+.\tests\test_ui.py:3:80: E501 line too long (106 > 79 characters)
+.\tests\test_ui.py:8:80: E501 line too long (123 > 79 characters)
+.\tests\test_ui.py:12:14: E401 multiple imports on one line
+.\tests\test_ui.py:23:1: E302 expected 2 blank lines, found 1
+.\tests\test_ui.py:35:80: E501 line too long (95 > 79 characters)
+.\tests\test_ui.py:51:80: E501 line too long (82 > 79 characters)
+.\tests\test_ui.py:61:1: E302 expected 2 blank lines, found 1
+.\tests\test_ui.py:67:80: E501 line too long (84 > 79 characters)
+.\tests\test_ui.py:93:42: E231 missing whitespace after ','
+.\tests\test_ui.py:115:80: E501 line too long (88 > 79 characters)
+.\tests\test_ui.py:138:47: E231 missing whitespace after ','
+.\tests\test_ui.py:156:53: E231 missing whitespace after ','
+.\tests\test_ui.py:161:55: E231 missing whitespace after ','
+.\tests\test_ui.py:179:53: E231 missing whitespace after ','
+.\tests\test_ui.py:184:55: E231 missing whitespace after ','
+.\tests\test_ui.py:189:51: E231 missing whitespace after ','
+.\tests\test_ui.py:199:80: E501 line too long (81 > 79 characters)
+.\tests\test_ui.py:200:80: E501 line too long (85 > 79 characters)

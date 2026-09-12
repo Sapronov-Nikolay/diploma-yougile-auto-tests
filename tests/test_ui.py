@@ -19,7 +19,6 @@ from src.ui.pages.column_page import ColumnPage
 from src.ui.pages.task_page import TaskPage
 from src.api.client import YouGileApiClient
 from src.api.endpoints.projects import ProjectsEndpoint
-from src.ui.locators import locators as ui_locators
 
 @allure.epic("UI")
 @allure.severity(allure.severity_level.CRITICAL)
@@ -84,11 +83,44 @@ class TestCreationUI:
     @allure.title("Создание проекта через UI")
     @allure.description("Проверка полного цикла создания проекта")
     @pytest.mark.ui
-    def test_create_project(self, authorized_driver):
+    def test_create_project(self, authorized_driver, api_client):
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.common.by import By
+
         project = ProjectPage(authorized_driver)
+
         with allure.step("1. Создать проект через UI"):
             name = f"{random.randint(1000,9999)}_Test_Project_UI"
             project.create_project(name)
+
+        with allure.step(f"2. Дождаться появления '{name}' в левой панели"):
+            WebDriverWait(authorized_driver, 15).until(
+                lambda d: any(
+                    name == item.text.strip()
+                    for item in d.find_elements(
+                        By.CSS_SELECTOR, "[data-testid='project-item']"
+                    )
+                )
+            )
+
+        with allure.step(f"3. Найти ID проекта '{name}' в левой панели"):
+            project_id = project.get_project_id_by_name(name)
+            allure.attach(
+                f"Имя: {name}\nID: {project_id}",
+                name=f"Созданный проект: {name}",
+                attachment_type=allure.attachment_type.TEXT,
+            )
+
+        if project_id:
+            with allure.step(f"4. Удалить проект '{name}' через API (id={project_id})"):
+                projects = ProjectsEndpoint(api_client)
+                projects.soft_delete(project_id)
+        else:
+            allure.attach(
+                "ID не найден — удаление пропущено. Проект удалит тест 7.",
+                name="ID не найден",
+                attachment_type=allure.attachment_type.TEXT,
+            )
 
     @allure.id("UI-04")
     @allure.story("Создание объектов")

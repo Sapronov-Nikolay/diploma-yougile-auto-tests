@@ -10,8 +10,6 @@
 
 from typing import Optional
 import random, allure, re
-
-from selenium.webdriver.support.wait import WebDriverWait
 from config import Config
 from src.ui.base_page import BasePage
 from src.ui.locators import locators
@@ -214,3 +212,19 @@ class ProjectPage(BasePage):
                         return False
                 return True
             self.wait.until(_gone)
+
+    @allure.step("Получить ID проекта по имени: {name}")
+    def get_project_id_by_name(self, name: str):
+        """Ищет проект в левой панели (там есть data-itemid) по имени."""
+        from selenium.webdriver.common.by import By
+        items = self.driver.find_elements(
+            By.CSS_SELECTOR, "[data-testid='project-item']"
+        )
+        for item in items:
+            try:
+                text = item.text.strip()
+            except Exception:
+                continue
+            if text == name.strip():
+                return item.get_attribute("data-itemid")
+        return None
