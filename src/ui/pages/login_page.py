@@ -10,10 +10,12 @@
     Здесь остаётся только сценарий: «открыть → ввести логин → ввести пароль → нажать войти».
 """
 
-import allure
+import allure, time
 from config import Config
 from src.ui.base_page import BasePage
 from src.ui.locators import locators
+from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.support import expected_conditions as EC
 
 """Page Object для страницы авторизации YouGile."""
 class LoginPage(BasePage):
@@ -35,10 +37,25 @@ class LoginPage(BasePage):
         self.send_keys('поле_пароля', password)
         self.click('кнопка_войти')
 
-    def is_mainpage(self):
-        return self.wait.until(
-            lambda d: d.find_element(*locators['заголовок_моя_компания'])
-        ), "Не удалось войти в систему"
+    def is_mainpage(self) -> bool:
+        """Ждём появления 'Моя компания'. При потере контекста — ретрай."""
+        for attempt in range(3):
+            try:
+                self.wait.until(
+                    EC.presence_of_element_located(locators['заголовок_моя_компания'])
+                )
+                return True
+            except WebDriverException as e:
+                if 'no such execution context' in str(e) and attempt < 2:
+                    # Перезагружаем страницу и пробуем снова
+                    try:
+                        self.driver.refresh()
+                    except WebDriverException:
+                        pass
+                    time.sleep(2)
+                    continue
+                return False
+        return False
 
     def is_errorpassword(self):
         return self.wait.until(

@@ -66,7 +66,7 @@ def authorized_driver(driver):
         login_page.login(Config.LOGIN, Config.PASSWORD)
     with allure.step("Дождаться появления заголовка 'Моя компания'"):
         assert login_page.is_mainpage()
-    driver.get(Config.BASE_URL + "/team/projects")
+    driver.get(Config.BASE_URL + "/team/")
     WebDriverWait(driver, 15).until(
         EC.presence_of_element_located(locators['заголовок_моя_компания'])
     )
@@ -94,35 +94,3 @@ def pytest_runtest_makereport(item, call):
             driver.save_screenshot(screenshot_path)
             allure.attach.file(screenshot_path, name="Screenshot", attachment_type=allure.attachment_type.PNG)
 
-# # noinspection PyUnusedLocal
-# def pytest_sessionfinish(session, exitstatus):
-#     """
-#         Физическое удаление всех проектов, созданных во время API-тестов.
-#         Запускается только после сессии, в которой были API-тесты.
-#     """
-#     if ALL_CREATED_PROJECT_IDS:
-#         from src.ui.pages.project_page import ProjectPage
-#         options = webdriver.ChromeOptions()
-#         options.add_argument('--headless')
-#         options.add_argument('--no-sandbox')
-#         options.add_argument('--disable-dev-shm-usage')
-#         cleanup_driver = webdriver.Chrome(options=options)
-#         cleanup_driver.maximize_window()
-#         login_page = LoginPage(cleanup_driver)
-#         login_page.open()
-#         login_page.login(Config.LOGIN, Config.PASSWORD)
-#         # Перейти на страницу проектов компании
-#         cleanup_driver.get(Config.BASE_URL + "/team/")
-#         WebDriverWait(cleanup_driver, 20).until(
-#             EC.presence_of_element_located(locators['панель_проектов_компании'])
-#         )
-#         project_page = ProjectPage(cleanup_driver)
-#         for pid in ALL_CREATED_PROJECT_IDS:
-#             try:
-#                 project_page.delete_project_by_id(pid)
-#                 print(f"✅ Проект {pid} удалён")
-#             except Exception as e:
-#                 # Если карточка не найдена (проект уже удалён мягко), просто пропускаем
-#                 print(f"⚠️ Проект {pid} не найден или уже удалён: {e}")
-#         # Удаляем по конкретным ID
-#         cleanup_driver.quit()

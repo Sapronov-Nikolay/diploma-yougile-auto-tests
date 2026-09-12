@@ -8,7 +8,7 @@
         Удаляет архивированные проекты, чьи ID совпадают с переданными в список.
 """
 
-from typing import Optional, List
+from typing import Optional
 import random, allure
 from config import Config
 from src.ui.base_page import BasePage

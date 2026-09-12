@@ -12,7 +12,6 @@
 
 import allure
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
 from src.ui.base_page import BasePage
 from src.ui.locators import locators
 
